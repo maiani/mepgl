@@ -1,0 +1,15 @@
+./build
+./simulations
+./energy.csv
+./launcher.sh
+
+*.npy
+*.npz
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.so
+
+.vscode/

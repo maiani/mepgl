@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.watcherExclude": {
+			"**/.git/**": true,
+			"**/simulations/**": true,
+			"**/build/**": true,
+		}
+	}
+}
