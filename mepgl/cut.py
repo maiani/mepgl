@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Initializing code for string methods applied to 2D GL system
+Cut strings in mepgl.
 """
 
 import argparse

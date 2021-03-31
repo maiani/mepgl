@@ -2,21 +2,19 @@
 
 from math import sqrt
 
-ones_mask = 1
-
 q_1    = -1.0
-a_1    = -1.0*ones_mask
-b_1    = 1.0*ones_mask
-m_xx_1 = 0.4*ones_mask
-m_yy_1 = 0.4*ones_mask
+a_1    = -1.0
+b_1    = 1.0
+m_xx_1 = 1.0
+m_yy_1 = 1.0
 
 m_1 = (m_xx_1 + m_yy_1)/2.0
 
 q_2    = -1.0
-a_2    = -1.0*ones_mask
-b_2    = 1.0*ones_mask
-m_xx_2 = 2.5*ones_mask
-m_yy_2 = 2.5*ones_mask
+a_2    = -1.0
+b_2    = 1.0
+m_xx_2 = 2.5
+m_yy_2 = 2.5
 
 m_2 = (m_xx_2 + m_yy_2)/2.0
 

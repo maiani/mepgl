@@ -323,11 +323,12 @@ void loop( bool &stop_flag,
         
         // Print stuff
         printf("\n");
+        printf("┌──────┬──────┬─────────────────┬─────────────────┬────────────────┬────────────────┐\n");
         printf("│ Sys# │   s  │  Free Energy    │  Delta Energy   │      ||g||     │      alpha     │\n");        
         printf("├──────┼──────┼─────────────────┼─────────────────┼────────────────┼────────────────┤\n");
         for(int n = 0; n<F; n+=max((F-1)/10,1)) 
             printf("│  %3.3d │ %4.2f │ %+.8e │ %+.8e │ %.8e │ %.8e │\n", n, s_jb[n], fenergy[n], fenergy[n]-fenergy_old[n],sqrt(g_norm2[n])/(N*N), alpha[n]);
-        printf("\n");
+        printf("└──────┴──────┴─────────────────┴─────────────────┴────────────────┴────────────────┘\n");
         
         printf("\n");
         printf("||g||_mean      %e       \n", g_norm_mean);
@@ -622,10 +623,12 @@ int main(int argc, const char *argv[]){
     int relaxation_steps = default_relaxation_step_number;
     char buffer[8];
 
-    printf("System |  Free Energy   | \n");        
-    printf("------------------------- \n");
+    printf("┌──────┬────────────────┐ \n");
+    printf("| Sys# |  Free Energy   | \n");        
+    printf("├──────┼────────────────┤ \n");
     for(int n = 0; n<F; n+=max((F-1)/10,1)) 
-        printf("   %3.3d | %.8e | \n", n, fenergy[n]);
+        printf("|  %3.3d | %.8e | \n", n, fenergy[n]);
+    printf("└──────┴────────────────┘ \n");
 
     printf("Starting MEP-MGL.\n\n");
  
@@ -777,10 +780,12 @@ int main(int argc, const char *argv[]){
         dev_b, dev_j_1, dev_j_2);
 
     // Print final energy
-    printf("System |  Free Energy   | \n");        
-    printf("------------------------- \n");
+    printf("┌──────┬────────────────┐ \n");
+    printf("| Sys# |  Free Energy   | \n");        
+    printf("├──────┼────────────────┤ \n");
     for(int n = 0; n<F; n+=max((F-1)/10,1)) 
-        printf("   %3.3d | %.8e | \n", n, fenergy[n]);
+        printf("|  %3.3d | %.8e | \n", n, fenergy[n]);
+    printf("└──────┴────────────────┘ \n");
 
     // Copying back to host
     checkCudaErrors(cudaMemcpy(a, dev_a, F_out*N*N*sizeof(real2), cudaMemcpyDeviceToHost));

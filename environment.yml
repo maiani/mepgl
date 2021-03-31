@@ -1,14 +1,16 @@
 name: mepgl
 channels:
-  - conda-forge
   - defaults
+  - conda-forge
 dependencies:
+  - boost
   - cmake
+  - gcc_linux-64
   - h5py
+  - make
   - matplotlib
   - numba
   - numpy
   - scipy
   - tqdm
-  
- 
+  - zlib

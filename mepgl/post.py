@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Post processing for string methods applied to Ginzburg-Landau systems
+Post processing code for mepgl.
 """
 
 import argparse
@@ -9,29 +9,12 @@ import importlib.util
 import os
 
 import numpy as np
-
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 
-from meplib.gl import build_nn_map, compute_normal, g_BL, f_BL
-
-from meplib.plot_utilities import *
-
-
-params = {
-   'font.family' : 'STIXGeneral',
-   'mathtext.fontset': 'stix',
-   'axes.labelsize': 10,
-   'legend.fontsize': 9,
-   'xtick.labelsize': 10,
-   'ytick.labelsize': 10,
-   'text.usetex': True,
-   'figure.figsize': [3.4, 2.5]
-   }
-
-
-plt.rcParams.update(params)
-
-plt.close('all')
+import mepgl_lib.set_rcparams
+from mepgl_lib.builder import build_nn_map, compute_normal
+from mepgl_lib.plot_utilities import *
 
 # Parse input
 parser = argparse.ArgumentParser(description='Post processing.')
@@ -293,8 +276,7 @@ os.makedirs(plot_dir + "all/", exist_ok = True)
 # b_max = np.ceil(100*np.nanmax(b))/100.0
 # b_min = np.floor(100*np.nanmin(b))/100.0
 
-for n in range(F):
-    print(f"Frame {n+1}/{F}")
+for n in tqdm(range(F)):
 
     str_n = '{:03d}'.format(n)
      

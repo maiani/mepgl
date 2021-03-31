@@ -1,6 +1,10 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 
-project(mep-gl LANGUAGES CXX CUDA)
+project(mepgl LANGUAGES CXX CUDA)
+
+if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+  set(CMAKE_CUDA_ARCHITECTURES 61)
+endif()
 
 set(
     CMAKE_CUDA_FLAGS
@@ -20,8 +24,8 @@ include_directories(${ZLIB_INCLUDE_DIRS})
 link_libraries(stdc++fs ${ZLIB_LIBRARIES} boost_program_options cusparse)
 
 add_executable(
-    mep-gl
-    mep-gl.cu
+    mepgl
+    mepgl.cu
     nlcg.cu
     interpolation.cu
     parallel_sum.cu
@@ -29,4 +33,4 @@ add_executable(
     cnpy.cpp
 )
 
-target_compile_definitions(mep-gl PRIVATE)
+target_compile_definitions(mepgl PRIVATE)

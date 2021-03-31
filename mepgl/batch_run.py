@@ -4,14 +4,14 @@ import subprocess
 
 import numpy as np
 
-eta = np.linspace(0.0, 0.1, 11)
+gamma = np.linspace(-0.5, 0.5, 11)
 
-for i in np.ndindex(eta.shape[0]):
-    print(f"eta = {eta[i]:4.2f}""")
+for i in np.ndindex(gamma.shape[0]):
+    print(f"gamma = {gamma[i]:+4.2f}""")
 
-for i in np.ndindex(eta.shape[0]):
+for i in np.ndindex(gamma.shape[0]):
     batched_params_dict = dict()
-    batched_params_dict['eta'] = eta[i]    
+    batched_params_dict['gamma'] = gamma[i]    
 
     batched_params_json = json.dumps(batched_params_dict)
 
@@ -19,5 +19,5 @@ for i in np.ndindex(eta.shape[0]):
     batched_params_file.write(batched_params_json)
     batched_params_file.close()
 
-    #subprocess.call("./run.py")
-    subprocess.call("./post.py")
+    subprocess.run(["python", "./run.py"])
+    subprocess.run(["python", "./post.py"])

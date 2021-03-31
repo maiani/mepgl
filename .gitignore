@@ -1,15 +1,19 @@
-./build
-./simulations
-./energy.csv
-./launcher.sh
-
-*.npy
-*.npz
-
+# Compiled Python
 __pycache__/
 *.py[cod]
 *$py.class
 
+# Types
+*.npy
+*.npz
+*.csv
+*.json
 *.so
 
+# Folders
 .vscode/
+build/
+simulations/
+
+# Files
+mepgl/mepgl
