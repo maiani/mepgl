@@ -42,9 +42,9 @@ import gen_header
 # Compile binaries
 print("[*] Compiling binaries")
 if args.debug:
-    subprocess.call(["./compile.sh", "--debug"])
+    subprocess.run(["bash", "./compile.sh", "--debug"])
 else:
-    subprocess.call("./compile.sh")    
+    subprocess.run(["bash", "./compile.sh"])    
 
 print("")
 print("[*] Generating launcher")
@@ -55,4 +55,4 @@ print("")
 print("[*] Running simulation")
 
 # Run the launcher
-subprocess.call("./launcher.sh")
+subprocess.run(["bash", "./launcher.sh"])

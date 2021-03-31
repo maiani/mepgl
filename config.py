@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 import json
 import numpy as np
-from meplib.gl import build_domain, get_indices, build_vortex_lattice
+from mepgl.builder import build_domain, get_indices, build_vortex_lattice
 
 # Device number
 dev_number = 0
 
 ############################# Batched parameters ##########################################
 
-with open('./batched_params.json') as json_file:
-   batched_params = json.load(json_file)
+#with open('./batched_params.json') as json_file:
+#   batched_params = json.load(json_file)
 
 h_field = 1.2 # batched_params['h_field']
-eta     = batched_params['eta']
+eta     = 0.0 #batched_params['eta']
 
 simulation_name = f"fractional-eta{eta:4.2f}"
 

@@ -3,12 +3,14 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - boost
   - cmake
+  - gcc_linux-64
   - h5py
+  - make
   - matplotlib
   - numba
   - numpy
   - scipy
   - tqdm
-  
- 
+  - zlib

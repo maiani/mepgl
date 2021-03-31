@@ -19,5 +19,5 @@ for i in np.ndindex(eta.shape[0]):
     batched_params_file.write(batched_params_json)
     batched_params_file.close()
 
-    subprocess.call("./run.py")
+    subprocess.run(["python", "./run.py"])
     #subprocess.call("./post.py")

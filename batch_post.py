@@ -20,4 +20,4 @@ for i in np.ndindex(eta.shape[0]):
     batched_params_file.close()
 
     #subprocess.call("./run.py")
-    subprocess.call("./post.py")
+    subprocess.run(["python", "./post.py" ])

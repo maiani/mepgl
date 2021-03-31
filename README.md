@@ -1,4 +1,4 @@
-# MEP-GL
+# MEPGL
 
 Gauged string method for the computation of Minimum Energy Path in Ginzburg-Landau models for superconductors and superfluids.
 

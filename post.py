@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Post processing for string methods applied to Ginzburg-Landau systems
+Post processing code for mepgl.
 """
 
 import argparse
@@ -12,9 +12,8 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-from meplib.gl import build_nn_map, compute_normal, g_BL, f_BL
-
-from meplib.plot_utilities import *
+from mepgl.builder import build_nn_map, compute_normal
+from mepgl.plot_utilities import *
 
 
 params = {
