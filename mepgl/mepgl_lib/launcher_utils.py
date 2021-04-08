@@ -12,10 +12,12 @@ import numpy as np
 data_type = np.float64
 # data_type = np.float32
 
+# Device number
+dev_number = 0
+
 # Header functions
 
-
-def generate_header(dev_number, N, dx, default_relaxation_step_number, multicomponent):
+def generate_header(N, dx, default_relaxation_step_number, multicomponent):
     """
     Generate the config.cuh header.
     """
@@ -61,13 +63,13 @@ def generate_header(dev_number, N, dx, default_relaxation_step_number, multicomp
     return config_cuh
 
 
-def write_header(dev_number, N, dx, default_relaxation_step_number, multicomponent):
+def write_header(N, dx, default_relaxation_step_number, multicomponent):
     """
     Write the config.cuh header.
     """
 
     config_cuh = generate_header(
-        dev_number, N, dx, default_relaxation_step_number, multicomponent
+        N, dx, default_relaxation_step_number, multicomponent
     )
     config_cuh_file = open("./src/config.cuh", "w+")
     config_cuh_file.write(config_cuh)

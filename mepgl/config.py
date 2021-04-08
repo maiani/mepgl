@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 import json
-import numpy as np
-from mepgl_lib.builder import build_domain, get_indices, build_vortex_lattice
 
-# Device number
-dev_number = 0
+import numpy as np
+
+from mepgl_lib.builder import build_domain, build_vortex_lattice
 
 ############################# Batched parameters ##########################################
 
 with open('./batched_params.json') as json_file:
     batched_params = json.load(json_file)
 
-h_field = 1.2 # batched_params['h_field']
-gamma   = batched_params['gamma']
+h_field = 1.1 # batched_params['h_field']
+gamma   = 0.0 # batched_params['gamma']
 
-simulation_name = f"m2f-gamma{gamma:+4.2f}"
+#simulation_name = f"sysc-m2c-h{h_field:3.2}-gamma{gamma:+4.2f}"
+simulation_name = f"sysc-m2c-h{h_field:3.2}"
 
 
 #############################################################################################
@@ -29,7 +29,7 @@ N = 401
 F = np.array([61])
 
 # Number of iterations per stage
-iterations = np.array([1500])
+iterations = np.array([2000])
 
 # Modes of each stage:
 # M -> Maxwell solver 
@@ -38,10 +38,10 @@ iterations = np.array([1500])
 # C -> SSM with cubic spline
 modes = np.array(['L'])
 
-default_relaxation_step_number = 10
+default_relaxation_step_number = 20
 
 ########################## Computational domain definition
-L   = 8.0
+L   = 12.0
 
 x, y, r, theta = build_domain(-L/2, +L/2, N)
 dx = x[1,0]-x[0,0]
@@ -69,17 +69,17 @@ sc_domain = comp_domain.copy()
 
 multicomponent = True
 
-q_1    = -1.0
+q_1    = -1.2
 a_1    = -1.0*ones_mask
 b_1    = 1.0*ones_mask
-m_xx_1 = 1.0*ones_mask
-m_yy_1 = 1.0*ones_mask
+m_xx_1 = 0.4*ones_mask
+m_yy_1 = 0.4*ones_mask
 
-q_2    = -1.0
+q_2    = -1.2
 a_2    = -1.0*ones_mask
 b_2    = 1.0*ones_mask
-m_xx_2 = 2.5*ones_mask
-m_yy_2 = 2.5*ones_mask
+m_xx_2 = 2.0*ones_mask
+m_yy_2 = 2.0*ones_mask
 
 eta    = 0.0
 # gamma  = 0.0
@@ -119,16 +119,16 @@ vortices_1 = np.zeros((vortices_number, F[0], 3))
 vortices_2 = np.zeros((vortices_number, F[0], 3))
 
 # First vortex
-x0_1 = np.linspace(0, 0,  F[0])
-y0_1 = np.linspace(0, 0,  F[0])
-w_1  = np.linspace(0, 0,  F[0])
+x0_1 = np.linspace(L/2 + 1, 1,  F[0])
+y0_1 = np.linspace(-0.5, -0.1,  F[0])
+w_1  = np.linspace(-1, -1,  F[0])
 
 vortices_1[0, :, 0] = w_1
 vortices_1[0, :, 1] = x0_1
 vortices_1[0, :, 2] = y0_1
 
-x0_2 = np.linspace(L/2 + 4, 0,  F[0])
-y0_2 = np.linspace(0, 0,  F[0])
+x0_2 = np.linspace(L/2 + 1, 1,  F[0])
+y0_2 = np.linspace(-0.5, -0.1,  F[0])
 w_2  = np.linspace(-1, -1,  F[0])
 
 vortices_2[0, :, 0] = w_2
@@ -138,7 +138,7 @@ vortices_2[0, :, 2] = y0_2
 # Second vortex
 # x0_1 = np.linspace(0, 0,  F[0])
 # y0_1 = np.linspace(0, 0,  F[0])
-# w_1  = np.linspace(-N_1, -N_1,  F[0])
+# w_1  = np.linspace(-1, -1,  F[0])
 
 # vortices_1[1, :, 0] = w_1
 # vortices_1[1, :, 1] = x0_1
@@ -146,7 +146,7 @@ vortices_2[0, :, 2] = y0_2
 
 # x0_2 = np.linspace(0, 0,  F[0])
 # y0_2 = np.linspace(0, 0,  F[0])
-# w_2  = np.linspace(-N_2, -N_2,  F[0])
+# w_2  = np.linspace(-1, -1,  F[0])
 
 # vortices_2[1, :, 0] = w_2
 # vortices_2[1, :, 1] = x0_2
@@ -163,9 +163,9 @@ ay  = np.zeros(shape=(F[0], N, N))
 
 for n in range(F[0]):
     u_n_1, v_n_1 = build_vortex_lattice(x, y, vortices_1[:, n, :])
-    u_1[n] = u_n_1 * sc_domain + 0.01 * np.random.randn(N, N) * sc_domain
-    v_1[n] = v_n_1 * sc_domain + 0.01 * np.random.randn(N, N) * sc_domain
+    u_1[n] = u_n_1 * sc_domain + 0.05 * np.random.randn(N, N) * sc_domain
+    v_1[n] = v_n_1 * sc_domain + 0.05 * np.random.randn(N, N) * sc_domain
 
     u_n_2, v_n_2 = build_vortex_lattice(x, y, vortices_2[:, n, :],  theta_0 = - theta_12)
-    u_2[n] = u_n_2 * sc_domain + 0.01 * np.random.randn(N, N) * sc_domain
-    v_2[n] = v_n_2 * sc_domain + 0.01 * np.random.randn(N, N) * sc_domain
+    u_2[n] = u_n_2 * sc_domain + 0.05 * np.random.randn(N, N) * sc_domain
+    v_2[n] = v_n_2 * sc_domain + 0.05 * np.random.randn(N, N) * sc_domain

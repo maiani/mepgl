@@ -12,9 +12,19 @@ import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-import mepgl_lib.set_rcparams
-from mepgl_lib.builder import build_nn_map, compute_normal
-from mepgl_lib.plot_utilities import *
+from mepgl_lib import set_rcparams
+from mepgl_lib.gl_utils import compute_winding
+from mepgl_lib.plot_utils import mgl_plot, pseudospin_plot
+
+############ SETTINGS #############################
+
+# Multicomponent
+mgl_plt = True
+pseudospin_plt = False
+
+
+###################################################
+
 
 # Parse input
 parser = argparse.ArgumentParser(description='Post processing.')
@@ -26,16 +36,15 @@ args = parser.parse_args()
 # If no input argumets are given use config file present in the root directory
 if args.simulation is None:
     import config
-    simulation_name = config.simulation_name
 
 # If input argument is given use the selected simulation config file
 else:
     spec = importlib.util.spec_from_file_location('config', f'./simulations/{args.simulation}/config.py')
     config = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(config)
-    simulation_name = args.simulation
     
 # Manually import all the used variables
+simulation_name = config.simulation_name
 multicomponent = config.multicomponent
 
 ###############################################################################
@@ -121,59 +130,17 @@ psi_theta_1 = np.arctan2(v_1, u_1)
 if multicomponent:
     psi_abs_2 = np.sqrt(u_2**2+v_2**2)
     psi_theta_2 = np.arctan2(v_2, u_2)    
+    psi_theta_12 = psi_theta_1 - psi_theta_2
 
 phi = np.zeros(F)
 for n in range(F):
     phi[n] = np.sum(b[n])*dx*dx
 
 # Winding number
-    
-w_1 = np.zeros(F)
-w_2 = np.zeros(F)
 
-if not multicomponent:
-    w_2 *= np.nan
-
-for n in range(F):
-    
-    for i in range(N-1):
-        w_1[n] += (+u_1[n, i, 0]*(v_1[n, i+1, 0]-v_1[n, i, 0])
-                 -v_1[n, i, 0]*(u_1[n, i+1, 0]-u_1[n, i, 0])
-        )/(u_1[n, i, 0]**2 + v_1[n, i, 0]**2)    
-
-        w_1[n] += (+u_1[n, -1, i]*(v_1[n, -1,i+1]-v_1[n, -1, i])
-                 -v_1[n, -1, i]*(u_1[n, -1,i+1]-u_1[n, -1, i])
-        )/(u_1[n, -1, i]**2 + v_1[n, -1, i]**2)    
-
-        w_1[n] += (+u_1[n, -1-i, -1]*(v_1[n, -2-i, -1]-v_1[n, -1-i, -1])
-                 -v_1[n, -1-i, -1]*(u_1[n, -2-i, -1]-u_1[n, -1-i, -1])
-        )/(u_1[n, -1-i, -1]**2 + v_1[n, -1-i, -1]**2)    
-
-        w_1[n] += (+u_1[n, 0, -1-i]*(v_1[n, 0, -2-i]-v_1[n, 0, -1-i])
-                 -v_1[n, 0, -1-i]*(u_1[n, 0, -2-i]-u_1[n, 0, -1-i])
-        )/(u_1[n, 0, -1-i]**2 + v_1[n, 0, -1-i]**2)    
-
-        if multicomponent:    
-            w_2[n] += (+u_2[n, i, 0]*(v_2[n, i+1, 0]-v_2[n, i, 0])
-                    -v_2[n, i, 0]*(u_2[n, i+1, 0]-u_2[n, i, 0])
-            )/(u_2[n, i, 0]**2 + v_2[n, i, 0]**2)    
-
-            w_2[n] += (+u_2[n, -1, i]*(v_2[n, -1,i+1]-v_2[n, -1, i])
-                    -v_2[n, -1, i]*(u_2[n, -1,i+1]-u_2[n, -1, i])
-            )/(u_2[n, -1, i]**2 + v_2[n, -1, i]**2)    
-
-            w_2[n] += (+u_2[n, -1-i, -1]*(v_2[n, -2-i, -1]-v_2[n, -1-i, -1])
-                    -v_2[n, -1-i, -1]*(u_2[n, -2-i, -1]-u_2[n, -1-i, -1])
-            )/(u_2[n, -1-i, -1]**2 + v_2[n, -1-i, -1]**2)    
-
-            w_2[n] += (+u_2[n, 0, -1-i]*(v_2[n, 0, -2-i]-v_2[n, 0, -1-i])
-                    -v_2[n, 0, -1-i]*(u_2[n, 0, -2-i]-u_2[n, 0, -1-i])
-            )/(u_2[n, 0, -1-i]**2 + v_2[n, 0, -1-i]**2)  
-        
-
-w_1 /= 2*np.pi
-w_2 /= 2*np.pi
-print(" done.")
+w_1 = compute_winding(u_1, v_1)
+if multicomponent:
+    w_2 = compute_winding(u_2, v_2)
 
 # Saving data
 np.savez(simulation_dir + f"{simulation_name}.npz", fenergy=fenergy,
@@ -183,8 +150,9 @@ np.savez(simulation_dir + f"{simulation_name}.npz", fenergy=fenergy,
                                                     w_2 = w_2, 
                                                     phi = phi)
 
+print(" done.")
 ############################ PLOTS  ############################################
-#    
+    
 # Make a directory for the plots
 plot_dir = "./simulations/"+simulation_name+"/plots/"
 
@@ -267,7 +235,12 @@ plt.close()
 # os.makedirs(plot_dir + "magnetic_field_3D/", exist_ok = True)
 # os.makedirs(plot_dir + "current_field_1/", exist_ok = True)
 # os.makedirs(plot_dir + "current_field_2/", exist_ok = True)
-os.makedirs(plot_dir + "all/", exist_ok = True)
+
+if multicomponent:
+    if mgl_plt: 
+        os.makedirs(plot_dir + "all/", exist_ok = True)
+    if pseudospin_plt: 
+        os.makedirs(plot_dir + "pseudospin/", exist_ok = True)
 
 #fig, ax = plot_single(x, y, fenergy, psi_abs*sc_mask, b*comp_mask, j_x_1, j_y_1)
 #fig.savefig(plot_dir + "single.png", dpi=500)
@@ -301,9 +274,15 @@ for n in tqdm(range(F)):
     # plt.close()
 
     if multicomponent:
-        fig = mgl_plot(n, x, y, fenergy, s_ph, psi_abs_1, psi_theta_1, j_x_1, j_x_2, psi_abs_2, psi_theta_2, j_x_2, j_y_2, b)
-        fig.savefig(plot_dir + f"all/{str_n }.png", dpi=400)
-        plt.close()
+        if mgl_plt:
+            fig = mgl_plot(n, x, y, fenergy, s_ph, psi_abs_1, psi_theta_1, j_x_1, j_x_2, psi_abs_2, psi_theta_2, j_x_2, j_y_2, b)
+            fig.savefig(plot_dir + f"all/{str_n }.png", dpi=1000)
+            plt.close(fig)
+
+        if pseudospin_plt:
+            fig, ax = pseudospin_plot(x, y, psi_abs_1[n], psi_abs_2[n], psi_theta_12[n])
+            fig.savefig(plot_dir + f"pseudospin/{str_n }.png", dpi=1000)
+            plt.close(fig)
 
         # complex_plot(x, y, psi_abs_2[n]*sc_mask, psi_theta_2[n]*sc_mask)
         # plt.savefig(plot_dir + f"psi_2/{str_n }-psi_2.png", bbox_inches="tight")

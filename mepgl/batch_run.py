@@ -20,4 +20,3 @@ for i in np.ndindex(gamma.shape[0]):
     batched_params_file.close()
 
     subprocess.run(["python", "./run.py"])
-    subprocess.run(["python", "./post.py"])
