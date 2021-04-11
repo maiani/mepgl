@@ -340,19 +340,19 @@ def mgl_plot(
     b_levels = np.linspace(np.nanmin(b), np.nanmax(b), 64)
     delta_levels = np.linspace(-np.pi, np.pi, 64)
 
-    fig = plt.figure(figsize=(9, 5), constrained_layout=True)
-    widths = [1, 1, 1.5]
-    heights = [1, 1, 1, 1]
-    gs = fig.add_gridspec(ncols=3, nrows=4, width_ratios=widths, height_ratios=heights)
+    fig = plt.figure(figsize=(10, 5), constrained_layout=True)
+    widths = [1, 0.05, 1, 0.05, 1.5]
+    heights = [0.1, 1, 1, 0.1, 1, 1]
+    gs = fig.add_gridspec(ncols=5, nrows=6, width_ratios=widths, height_ratios=heights)
 
     # UPPER LEFT
-    ax1 = fig.add_subplot(gs[0:2, 0])
+    ax1 = fig.add_subplot(gs[0:3, 0])
     ax1.set_aspect("equal")
     im = ax1.contourf(x, y, psi_abs_1[n], levels=psi_abs_1_levels, cmap="viridis_r")
     divider = make_axes_locatable(ax1)
-    cax = divider.append_axes("right", size="5%", pad=0.1)
+    cax1 = fig.add_subplot(gs[1:3, 1])
     cbar = fig.colorbar(
-        im, cax=cax, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_1), 3)
+        im, cax=cax1, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_1), 3)
     )
 
     # U  = uniform_filter(j_x_1[n], delta)[::delta,::delta]
@@ -362,16 +362,16 @@ def mgl_plot(
     # V[np.abs(V) < 1e-5] = np.nan
     # ax1.quiver(X, Y, U, V, scale=50*np.max(np.sqrt(U**2+V**2)), color=[1,1,1,0.5])
 
-    ax1.set_title(r"Order parameter $\psi_1$")
+    ax1.set_title(r"$|\psi_1|$")
 
     # UPPER RIGHT
-    ax2 = fig.add_subplot(gs[0:2, 1])
+    ax2 = fig.add_subplot(gs[0:3, 2])
     ax2.set_aspect("equal")
     im = ax2.contourf(x, y, psi_abs_2[n], levels=psi_abs_2_levels, cmap="viridis_r")
     divider = make_axes_locatable(ax2)
-    cax = divider.append_axes("right", size="5%", pad=0.1)
+    cax2 = fig.add_subplot(gs[1:3, 3])
     cbar = fig.colorbar(
-        im, cax=cax, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_2), 3)
+        im, cax=cax2, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_2), 3)
     )
 
     # U  = uniform_filter(j_x_2[n], delta)[::delta,::delta]
@@ -381,32 +381,32 @@ def mgl_plot(
     # V[np.abs(V) < 1e-5] = np.nan
     # ax2.quiver(X, Y, U, V, scale=50*np.max(np.sqrt(U**2+V**2)), color=[1,1,1,0.5])
 
-    ax2.set_title(r"Order parameter $\psi_2$")
+    ax2.set_title(r"$|\psi_2|$")
 
     # LOWER LEFT
-    ax3 = fig.add_subplot(gs[2:4, 0])
+    ax3 = fig.add_subplot(gs[3:6, 0])
     ax3.set_aspect("equal")
     im = ax3.contourf(x, y, psi_delta[n], levels=delta_levels, cmap="twilight")
     divider = make_axes_locatable(ax3)
-    cax = divider.append_axes("right", size="5%", pad=0.1)
+    cax3 = fig.add_subplot(gs[4:6, 1])
     cbar = fig.colorbar(
-        im, cax=cax, format="%1.1f", ticks=np.linspace(-np.pi, np.pi, 3)
+        im, cax=cax3, format="%1.1f", ticks=np.linspace(-np.pi, np.pi, 3)
     )
-    ax3.set_title(r"$\Delta \theta$")
+    ax3.set_title(r"$\Delta \theta_{12}$")
 
     # LOWER RIGHT
-    ax4 = fig.add_subplot(gs[2:4, 1])
+    ax4 = fig.add_subplot(gs[3:6, 2])
     ax4.set_aspect("equal")
     im = ax4.contourf(x, y, b[n], levels=b_levels, cmap="jet")
     divider = make_axes_locatable(ax4)
-    cax = divider.append_axes("right", size="5%", pad=0.1)
+    cax4 = fig.add_subplot(gs[4:6, 3])
     cbar = fig.colorbar(
-        im, cax=cax, format="%1.1f", ticks=np.linspace(np.nanmin(b), np.nanmax(b), 3)
+        im, cax=cax4, format="%1.1f", ticks=np.linspace(np.nanmin(b), np.nanmax(b), 3)
     )
-    ax4.set_title(r"Magnetic field $B_z$")
+    ax4.set_title(r"$B_z$")
 
     # RIGHT
-    ax5 = fig.add_subplot(gs[1:3, 2])
+    ax5 = fig.add_subplot(gs[2:5, 4])
     ax5.plot(s, fenergy, ".-")
     ax5.scatter(s[n], fenergy[n], color="C3")
     deltaf = np.max(fenergy) - np.min(fenergy)
@@ -416,7 +416,7 @@ def mgl_plot(
     ax5.set_ylabel(r"F(s)")
     ax5.set_title(r"Minimum Energy Path")
 
-    gs.tight_layout(figure=fig)
+    #gs.tight_layout(figure=fig)
 
     return fig
 

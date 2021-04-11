@@ -2,6 +2,10 @@
 
 Gauged string method for the computation of minimum energy paths (MEP) in Ginzburg-Landau (GL) models for superconductors and superfluids.
 
+
+<img src="cover.png" width="100%" />
+
+
 ## Getting Started
 
 ### Prerequisites:
@@ -27,6 +31,7 @@ To set the numeric precision, you need to edit `./src/real.cuh` and `./mepgl_lib
 ### Writing down a config file
 The first step to run the program is to edit the configuration file `./config.py`. 
 This file provide the parameters of the system and the information to build the initial guess for the path.
+Some example configuration files are inclued in the `examples` folder.
 
 ### Run the program
 
@@ -40,11 +45,8 @@ Runtime commands (press the key and then Enter):
 
 The results of the simulation can be found in the `./simulations` folder under a directory with the name of the simulation.
  
-### Details of the launcher 
-TBW
-
 ### Run simulations in batches
-TBW
+To run simulations in batches the `./batch_run.py` file can be used. You will need to edit it and the config file.
 
 ### Other options
 - If you want to continue a simulation run `./reload.py` to load the output of the previous run as initial guess, 
