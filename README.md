@@ -2,6 +2,19 @@
 
 Gauged string method for the computation of minimum energy paths (MEP) in Ginzburg-Landau (GL) models for superconductors and superfluids.
 
+
+<img src="cover.png" width="100%" />
+
+This code is able to compute minimum energy paths of system described by the free energy
+<img src="https://render.githubusercontent.com/render/math?math=F[\mathbf{A}, \psi_1, \psi_2] = \sum_{\alpha=1,2} [ \sum_{k=x,y} \frac{|D_{k\psi_\alpha}|^2}{2 m_{\alpha,kk}} %2B \frac{b_\alpha}{2} ( \frac{a_\alpha}{b_\alpha} %2B |\psi_\alpha|^2)^2] %2B \frac{1}{2}(\nabla \cross \mathbf{A} - \mathbf{H})^2 %2B V_{\mathrm{int}}(\psi_1, \psi_2)">
+
+with direct interactions
+
+<img src="https://render.githubusercontent.com/render/math?math=V_{\mathrm{int}}(\psi_1, \psi_2) = \frac{\eta}{2}(\psi_1 \psi_2^* %2B \mathrm{c.c.}) %2B \frac{\gamma}{2} |\psi_1|^2 |\psi_2|^2 %2B \frac{\delta}{4} ([\psi_1\psi_2^*]^2 %2B \mathrm{c.c.})\,.  
+">
+
+It is possible to simulate any 2D geometry with an arbitrary initial guess. 
+
 ## Getting Started
 
 ### Prerequisites:
@@ -10,9 +23,9 @@ To run this software, you need
 * CUDA Toolkit
 * ZLib
 * Boost libraries
-* Python scientific libraries (numpy, scipy, matplotlib)
+* Python scientific libraries (NumPy, SciPy, matplotlib)
 
-A conda yml file is provided to get these library, except for the CUDA toolkit.
+A conda yml file is provided to get these libraries, except for the CUDA toolkit.
 To use it, run 
 ``` 
 conda env create -f environment.yml
@@ -26,7 +39,8 @@ To set the numeric precision, you need to edit `./src/real.cuh` and `./mepgl_lib
 
 ### Writing down a config file
 The first step to run the program is to edit the configuration file `./config.py`. 
-This file provide the parameters of the system and the information to build the initial guess for the path.
+This file provides the parameters of the system and the information to build the initial guess for the path.
+Some example configuration files are included in the `examples` folder.
 
 ### Run the program
 
@@ -35,22 +49,19 @@ If you need to run it in debug mode: `./run.py --debug`
 
 Runtime commands (press the key and then Enter):
 - `+` and `-` change the number of relaxation steps.
-- `q` stops the simulation and save the results.
+- `q` stops the simulation and saves the results.
 - `C` switch on and off NLCG.
 
 The results of the simulation can be found in the `./simulations` folder under a directory with the name of the simulation.
  
-### Details of the launcher 
-TBW
-
 ### Run simulations in batches
-TBW
+To run simulations in batches the `./batch_run.py` file can be used. You will need to edit it and the config file.
 
 ### Other options
 - If you want to continue a simulation run `./reload.py` to load the output of the previous run as initial guess, 
 then run the simulation with `./run.py --noinit` to prevent overwriting the input files.
 
-- You can check the mep in realtime while the simulation is running using `./rtanim.py`. 
+- You can check the mep in real-time while the simulation is running using `./rtanim.py`. 
 
 ## References
 This code has been used for the following papers:
@@ -58,7 +69,7 @@ This code has been used for the following papers:
 * \[1\] Benfenati A., Maiani A., Rybakov F. N., Bababev E. - *Vortex nucleation barrier revisited* - https://arxiv.org/abs/1911.09513
 * \[2\] Maiani A., Benfenati A., Bababev E. - *Vortex nucleation barriers and surface fractional vortices in two-component Ginzburg-Landau model* 
 
-If you use this code, please cite as 
+If you use this code, please cite it as 
 
 ```
 @article{mepgl,
