@@ -21,7 +21,7 @@
 #define BETA 1
 
 // If defined turn off linesearch and use the constant step length given
-// #define ALPHA 1e-30
+// #define ALPHA 1e-1
 
 // Enable bilinear bilinear Josephson coupling
 #define BILINEAR_JOSEPHSON_COUPLING
@@ -31,6 +31,9 @@
 
 // Enable biquadratic Josephson coupling
 #define BIQUADRATIC_JOSEPHSON_COUPLING
+
+// Neglect self field (for thin field)
+#define NO_SELF_FIELD
 
 // DEBUG
 // #define NO_NL
@@ -205,7 +208,7 @@ void freeEnergyDensity( int* comp_nn_map, int* sc_nn_map,
     #ifndef NO_NL
     fenergy_density[idx] += nl_term*dx*dx;
     #endif
-    #ifndef NO_EM
+    #if !defined(NO_EM) && !defined(NO_SELF_FIELD)
     fenergy_density[idx] += em_term*dx*dx;
     #endif
 }
@@ -530,7 +533,7 @@ void gradientPsi( int* comp_nn_map, int* sc_nn_map,
             + 1.0/dx * (- (psi_1[idx+1].x - psi_1[idx].x)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].y) 
             + 1.0/dx * (- (psi_1[idx+1].x - psi_1[idx].x)/dx - q_1[0]*a[idx+1].x*psi_1[idx+1].y)
                               
-            - q_1[0]*a[idx  ].x * (+(psi_1[idx+1].y - psi_1[idx].y)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].x) 
+            - q_1[0]*a[idx  ].x * (+ (psi_1[idx+1].y - psi_1[idx].y)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].x) 
             
         ) * (int2bit(sc_nn_map[idx_0], 1) * int2bit(sc_nn_map[idx_0], 2) +
              int2bit(sc_nn_map[idx_0], 6) * int2bit(sc_nn_map[idx_0], 7))/2.0f;
@@ -540,7 +543,7 @@ void gradientPsi( int* comp_nn_map, int* sc_nn_map,
             - 1.0/dx * (+ (psi_1[idx+1].y - psi_1[idx].y)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].x) 
             - 1.0/dx * (+ (psi_1[idx+1].y - psi_1[idx].y)/dx - q_1[0]*a[idx+1].x*psi_1[idx+1].x)
                             
-            - q_1[0]*a[idx  ].x   * (- (psi_1[idx+1].x - psi_1[idx].x)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].y) 
+            - q_1[0]*a[idx  ].x * (- (psi_1[idx+1].x - psi_1[idx].x)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].y) 
             
         ) * (int2bit(sc_nn_map[idx_0], 1) * int2bit(sc_nn_map[idx_0], 2) + 
              int2bit(sc_nn_map[idx_0], 6) * int2bit(sc_nn_map[idx_0], 7))/2.0f;
@@ -559,8 +562,8 @@ void gradientPsi( int* comp_nn_map, int* sc_nn_map,
 
         psi_1_g[idx].y += 0.5/m_xx_1[idx_0]*(
             
-            + 1.0/dx * (+ 1.0*(psi_1[idx].y - psi_1[idx-1].y)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].x) 
-            + 1.0/dx * (+ 1.0*(psi_1[idx].y - psi_1[idx-1].y)/dx - q_1[0]*a[idx-1].x*psi_1[idx-1].x)
+            + 1.0/dx * (+ (psi_1[idx].y - psi_1[idx-1].y)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].x) 
+            + 1.0/dx * (+ (psi_1[idx].y - psi_1[idx-1].y)/dx - q_1[0]*a[idx-1].x*psi_1[idx-1].x)
                             
             - q_1[0]*a[idx  ].x * (- (psi_1[idx].x - psi_1[idx-1].x)/dx - q_1[0]*a[idx  ].x*psi_1[idx  ].y) 
             
@@ -679,8 +682,8 @@ void gradientPsi( int* comp_nn_map, int* sc_nn_map,
 
         psi_2_g[idx].y += 0.5/m_xx_2[idx_0]*(
             
-            + 1.0/dx * (+ 1.0*(psi_2[idx].y - psi_2[idx-1].y)/dx - q_2[0]*a[idx  ].x*psi_2[idx  ].x) 
-            + 1.0/dx * (+ 1.0*(psi_2[idx].y - psi_2[idx-1].y)/dx - q_2[0]*a[idx-1].x*psi_2[idx-1].x)
+            + 1.0/dx * (+ (psi_2[idx].y - psi_2[idx-1].y)/dx - q_2[0]*a[idx  ].x*psi_2[idx  ].x) 
+            + 1.0/dx * (+ (psi_2[idx].y - psi_2[idx-1].y)/dx - q_2[0]*a[idx-1].x*psi_2[idx-1].x)
                             
             - q_2[0]*a[idx  ].x * (- (psi_2[idx].x - psi_2[idx-1].x)/dx - q_2[0]*a[idx  ].x*psi_2[idx  ].y) 
             
@@ -1103,7 +1106,7 @@ void polynomialExpansion(int* comp_nn_map, int* sc_nn_map,
     #endif
 
     // EM Term
-    #ifndef NO_EM
+    #if !defined(NO_EM) && !defined(NO_SELF_FIELD)
     real em_term[2];
     if(int2bit(comp_nn_map[idx_0], 0) && int2bit(comp_nn_map[idx_0], 1) && int2bit(comp_nn_map[idx_0], 2)){
         em_term[0] = ((a[idx+1].y - a[idx].y)/dx - (a[idx+N].x - a[idx].x)/dx - h[idx_0]);
@@ -1524,12 +1527,15 @@ void nlcgSteps(
                                                                   dev_a_g, dev_psi_1_g, dev_psi_2_g);
                     
     
+        #ifndef NO_SELF_FIELD
         gradientA <<< dim3(gridSizeX, F), dim3(blockSizeX, 1) >>>(dev_comp_nn_map, dev_sc_nn_map, 
                                                             dev_a_1, dev_b_1, dev_m_xx_1, dev_m_yy_1, 
                                                             dev_a_2, dev_b_2, dev_m_xx_2, dev_m_yy_2, 
                                                             dev_h, dev_q_1, dev_q_2, dev_eta, dev_gamma, dev_delta,
                                                             dev_a, dev_psi_1, dev_psi_2,
                                                             dev_a_g, dev_psi_1_g, dev_psi_2_g);
+        #endif
+
         checkCudaErrors(cudaDeviceSynchronize());  
 
         // Compute gradient norm

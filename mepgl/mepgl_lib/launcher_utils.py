@@ -9,8 +9,8 @@ import subprocess
 import numpy as np
 
 ## Change for single/double precision
-data_type = np.float64
-# data_type = np.float32
+# data_type = np.float64
+data_type = np.float32
 
 # Device number
 dev_number = 0

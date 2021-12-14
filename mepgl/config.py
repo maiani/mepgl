@@ -1,171 +1,121 @@
 #!/usr/bin/env python3
-import json
-
 import numpy as np
+from numpy.core.numeric import zeros_like
 
-from mepgl_lib.builder import build_domain, build_vortex_lattice
+from mepgl_lib.builder import StringBuilder
 
 ############################# Batched parameters ##########################################
+# import json
+# with open('./batched_params.json') as json_file:
+#     batched_params = json.load(json_file)
 
-with open('./batched_params.json') as json_file:
-    batched_params = json.load(json_file)
-
-h_field = 1.1 # batched_params['h_field']
-gamma   = 0.0 # batched_params['gamma']
-
-#simulation_name = f"sysc-m2c-h{h_field:3.2}-gamma{gamma:+4.2f}"
-simulation_name = f"sysc-m2c-h{h_field:3.2}"
-
+# h = batched_params['h']
+# gamma = batched_params['gamma']
+# simulation_name = f"syse-composite-{h:3.2}-gamma{gamma:+4.2f}"
 
 #############################################################################################
 
 # Name of the simulation
-# simulation_name = "domain-wall-vortex"
-
-# Number of points per side 
-N = 401
+simulation_name = "single_component_test"
 
 # Number of computational frames per stage
-F = np.array([61])
+F = np.array([2])
 
 # Number of iterations per stage
-iterations = np.array([2000])
+iterations = np.array([50])
 
 # Modes of each stage:
-# M -> Maxwell solver 
+# M -> Maxwell solver
 # S -> Normal solver
 # L -> SSM with linear spline
 # C -> SSM with cubic spline
-modes = np.array(['L'])
+modes = np.array(["S"])
 
-default_relaxation_step_number = 20
+default_relaxation_step_number = 30
 
-########################## Computational domain definition
-L   = 12.0
+multicomponent = False
 
-x, y, r, theta = build_domain(-L/2, +L/2, N)
-dx = x[1,0]-x[0,0]
+########################################################################
 
-ones_mask = np.ones((N, N))
+# Number of points per side
+N  = 501
+L = 10
 
-comp_domain = np.ones((N,N), dtype=np.int16)
+x_lim = [-L / 2, L / 2]
+y_lim = [-L / 2, L / 2]
 
-#rc = 0.5 
-#comp_domain[x**2 + (y-L/2)**2 <= rc] = 0
-#comp_domain[x**2 + (y+L/2)**2 <= rc] = 0
+builder = StringBuilder(F[0], Nx=N, Ny=N, x_lim=x_lim, y_lim=y_lim, multicomponent=multicomponent)
 
-# comp_domain[(x>0)&(y>0)]=0
+x, y = builder.x, builder.y
+dx = builder.x_ax[1] - builder.x_ax[0]
 
-#comp_domain[x**2 + y**2 > r_2] = 0
-
-########################## Superconductive domain definition
-
-sc_domain = comp_domain.copy()
-
-#sc_domain[(N-1)//2, (N-1)//2] = 0
-#sc_domain[x**2 + y**2 < r_1] = 0
+comp_domain, sc_domain = builder.get_domain_matrices()
 
 ########################## Superconductive parameters definition
 
-multicomponent = True
+q_1 = -1.0
+a_1 = -1.0
+b_1 = 1.0
+m_xx_1 = 1.0
+m_yy_1 = 1.0
 
-q_1    = -1.2
-a_1    = -1.0*ones_mask
-b_1    = 1.0*ones_mask
-m_xx_1 = 0.4*ones_mask
-m_yy_1 = 0.4*ones_mask
+q_2 = -1.0
+a_2 = -1.0
+b_2 = 1.0
+m_xx_2 = 1.0
+m_yy_2 = 1.0
 
-q_2    = -1.2
-a_2    = -1.0*ones_mask
-b_2    = 1.0*ones_mask
-m_xx_2 = 2.0*ones_mask
-m_yy_2 = 2.0*ones_mask
+eta = +0.00
+gamma = +0.00
+delta = +0.00
 
-eta    = 0.0
-# gamma  = 0.0
-delta  = 0.0
+h_z = 0.8
 
-# h_field = 0.00
+####################
+ones_mask = np.ones((N, N), dtype=float)
 
-h = comp_domain * h_field
+a_1 *= ones_mask
+b_1 *= ones_mask
+m_xx_1 *= ones_mask
+m_yy_1 *= ones_mask
+
+a_2 *= ones_mask
+b_2 *= ones_mask
+m_xx_2 *= ones_mask
+m_yy_2 *= ones_mask
+
+h = h_z * comp_domain
 
 #############################################################################################
 
-psi0_1 = np.mean(np.sqrt(-a_1/b_1))
-psi0_2 = np.mean(np.sqrt(-a_2/b_2))
+psi0_1 = np.mean(np.sqrt(-a_1 / b_1))
+psi0_2 = np.mean(np.sqrt(-a_2 / b_2))
 
-if eta!=0:
-    if delta!= 0:
-        theta_12 = np.arccos(-eta/delta * psi0_1 * psi0_2 / 2)
+if eta != 0:
+    if delta != 0:
+        theta_12 = np.arccos(-eta / delta * psi0_1 * psi0_2 / 2)
     else:
         theta_12 = -np.pi
 else:
-    if delta!= 0:
-        theta_12 = np.pi/2
+    if delta != 0:
+        theta_12 = np.pi / 2
     else:
         theta_12 = 0
 
+builder.add_phase_diff(lambda x, y: theta_12)
 
-################################ Initial guess
+xv = np.linspace(L / 2 + 2, 0, F[0])
+yv = np.linspace(0.0, 0.0, F[0])
+wv = np.linspace(-1, -1, F[0])
 
-# Position and winding number of the vortex 
-# Structure of the vortices matrix:
-# [vortex_id, frame, 0 ] = w, winding number, 0 to have no vortex
-# [vortex_id, frame, 1 ] = x0, coordinate of the core
-# [vortex_id, frame, 2 ] = y0, coordinate of the core
+builder.add_vortex(xv, yv, wv, 1)
+# builder.add_vortex(xv, yv, wv, 2)
 
-vortices_number = 1
-vortices_1 = np.zeros((vortices_number, F[0], 3))
-vortices_2 = np.zeros((vortices_number, F[0], 3))
+u_1, v_1, u_2, v_2 = builder.generate_matter_fields(
+    psi_abs_1=psi0_1, psi_abs_2=psi0_2, noise=0.0
+)
 
-# First vortex
-x0_1 = np.linspace(L/2 + 1, 1,  F[0])
-y0_1 = np.linspace(-0.5, -0.1,  F[0])
-w_1  = np.linspace(-1, -1,  F[0])
-
-vortices_1[0, :, 0] = w_1
-vortices_1[0, :, 1] = x0_1
-vortices_1[0, :, 2] = y0_1
-
-x0_2 = np.linspace(L/2 + 1, 1,  F[0])
-y0_2 = np.linspace(-0.5, -0.1,  F[0])
-w_2  = np.linspace(-1, -1,  F[0])
-
-vortices_2[0, :, 0] = w_2
-vortices_2[0, :, 1] = x0_2
-vortices_2[0, :, 2] = y0_2
-
-# Second vortex
-# x0_1 = np.linspace(0, 0,  F[0])
-# y0_1 = np.linspace(0, 0,  F[0])
-# w_1  = np.linspace(-1, -1,  F[0])
-
-# vortices_1[1, :, 0] = w_1
-# vortices_1[1, :, 1] = x0_1
-# vortices_1[1, :, 2] = y0_1
-
-# x0_2 = np.linspace(0, 0,  F[0])
-# y0_2 = np.linspace(0, 0,  F[0])
-# w_2  = np.linspace(-1, -1,  F[0])
-
-# vortices_2[1, :, 0] = w_2
-# vortices_2[1, :, 1] = x0_2
-# vortices_2[1, :, 2] = y0_2
-
-# Build string
-u_1 = np.zeros(shape=(F[0], N, N))
-v_1 = np.zeros(shape=(F[0], N, N))
-u_2 = np.zeros(shape=(F[0], N, N))
-v_2 = np.zeros(shape=(F[0], N, N))
-ax  = np.zeros(shape=(F[0], N, N))
-ay  = np.zeros(shape=(F[0], N, N))
-
-
-for n in range(F[0]):
-    u_n_1, v_n_1 = build_vortex_lattice(x, y, vortices_1[:, n, :])
-    u_1[n] = u_n_1 * sc_domain + 0.05 * np.random.randn(N, N) * sc_domain
-    v_1[n] = v_n_1 * sc_domain + 0.05 * np.random.randn(N, N) * sc_domain
-
-    u_n_2, v_n_2 = build_vortex_lattice(x, y, vortices_2[:, n, :],  theta_0 = - theta_12)
-    u_2[n] = u_n_2 * sc_domain + 0.05 * np.random.randn(N, N) * sc_domain
-    v_2[n] = v_n_2 * sc_domain + 0.05 * np.random.randn(N, N) * sc_domain
+#ax = np.zeros_like(u_1)
+#ay = np.zeros_like(u_1)
+builder.B_z = h_z
+ax, ay = builder.generate_vector_potential(gauge="symmetric")

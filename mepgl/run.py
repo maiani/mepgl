@@ -56,15 +56,25 @@ parser.add_argument("-n", "--noinit", help="No init", action="store_true")
 args = parser.parse_args()
 
 # Makes simulation directory and copy the config file
-sim_dir_name = f"./simulations/{simulation_name}/"
-os.makedirs(sim_dir_name, exist_ok=True)
-shutil.copy(f"./config.py", f"./simulations/{simulation_name}/config.py")
+sim_data_dir = f"./simulations/{simulation_name}/"
+# sim_output_dir = f"./output/{simulation_name}/"
+
+os.makedirs(sim_data_dir, exist_ok=True)
+# os.makedirs(sim_output_dir, exist_ok=True)
+
+shutil.copy(f"./config.py", f"{sim_data_dir}/config.py")
+# shutil.copy(f"./config.py", f"{sim_output_dir}/config.py")
+
 try:
     shutil.copy(
-        f"./batched_params.json", f"./simulations/{simulation_name}/batched_params.json"
+        f"./batched_params.json", f"{sim_data_dir}/batched_params.json"
+        # f"./batched_params.json", f"{sim_output_dir}/batched_params.json"
     )
 except:
     pass
+
+
+print(f"Simulation name: {simulation_name}")
 
 # Generate initial guess
 if not args.noinit:
@@ -100,20 +110,22 @@ if not args.noinit:
         y,
     )
     print("done")
-
-    # Generate the header file
-    print("[*] Generating header.")
-    write_header(N, dx, default_relaxation_step_number, multicomponent)
-
-    # Compile binaries
-    print("[*] Compiling binaries.")
-    if args.debug:
-        subprocess.run(["bash", "./compile.sh", "--debug"])
-    else:
-        subprocess.run(["bash", "./compile.sh"])
-
     print("===> Initialization finished <==")
     print("")
+
+# Generate the header file
+print("[*] Generating header.")
+write_header(N, dx, default_relaxation_step_number, multicomponent)
+
+# Compile binaries
+print("[*] Compiling binaries.")
+if args.debug:
+    subprocess.run(["bash", "./compile.sh", "--debug"])
+else:
+    subprocess.run(["bash", "./compile.sh"])
+
+print("===> Compilation finished <==")
+print("")
 
 print("[*] Running simulation. ")
 launch_simulation(simulation_name, F, iterations, modes)
