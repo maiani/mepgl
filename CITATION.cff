@@ -9,6 +9,7 @@ version: 0.2.0
 #doi:
 date-released: 2021-12-01
 url: "https://github.com/maiani/mepgl"
+
 preferred-citation:
   type: article
   authors:
@@ -24,8 +25,8 @@ preferred-citation:
     - family-names: "Babaev"
       given-names: "Egor"
   doi: "10.1103/PhysRevB.101.220505"
-  url: "https://github.com/maiani/mepgl"
-  journal: "Journal Title"
+  url: "https://journals.aps.org/prb/abstract/10.1103/PhysRevB.101.220505"
+  journal: "Physical Review B"
   month: 6
   start: 220505 # First page number
   # end: 10 # Last page number
