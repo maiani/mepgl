@@ -5,7 +5,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.ndimage import uniform_filter
 
-from . import set_rcparams
+plt.style.use("mepgl.mplstyle")
 
 ############################### STATIC PLOTS SINGLE COMPONENT ###############################
 

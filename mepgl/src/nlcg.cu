@@ -32,8 +32,8 @@
 // Enable biquadratic Josephson coupling
 #define BIQUADRATIC_JOSEPHSON_COUPLING
 
-// Neglect self field (for thin field)
-#define NO_SELF_FIELD
+// Neglect self field (for thin films)
+// #define NO_SELF_FIELD
 
 // DEBUG
 // #define NO_NL

@@ -167,24 +167,24 @@ class StringBuilder:
                     psi_abs = psi_abs_2 + 0 * self.x
                     psi_theta = self.phase_fun(self.x, self.y)
 
-                if wv[N] != 0:
-                    r_i = np.sqrt(
-                        (self.x - xv[N]) ** 2
-                        + (self.y - yv[N]) ** 2
-                    )
-                    psi_abs *= np.tanh(-(r_i ** 2))
-                    psi_theta += wv[N] * np.arctan2(
-                        self.y - yv[N], self.x - xv[N]
-                    )
-
-                u_2[N] = (
-                    psi_abs * np.cos(psi_theta)
-                    + noise * np.random.randn(self.Nx, self.Ny)
-                ) * sc_domain
-                v_2[N] = (
-                    psi_abs * np.sin(psi_theta)
-                    + noise * np.random.randn(self.Nx, self.Ny)
-                ) * sc_domain
+                    if wv[N] != 0:
+                        r_i = np.sqrt(
+                            (self.x - xv[N]) ** 2
+                            + (self.y - yv[N]) ** 2
+                        )
+                        psi_abs *= np.tanh(-(r_i ** 2))
+                        psi_theta += wv[N] * np.arctan2(
+                            self.y - yv[N], self.x - xv[N]
+                        )
+                    
+                    u_2[N] = (
+                        psi_abs * np.cos(psi_theta)
+                        + noise * np.random.randn(self.Nx, self.Ny)
+                    ) * sc_domain
+                    v_2[N] = (
+                        psi_abs * np.sin(psi_theta)
+                        + noise * np.random.randn(self.Nx, self.Ny)
+                    ) * sc_domain
 
         else:
             u_2 = None

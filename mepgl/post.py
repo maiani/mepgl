@@ -12,7 +12,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-from mepgl_lib import set_rcparams
 from mepgl_lib.gl_utils import compute_winding
 from mepgl_lib.plot_utils import gl_plot, mgl_plot, pseudospin_plot
 

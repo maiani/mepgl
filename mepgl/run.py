@@ -34,6 +34,7 @@ from config import (
     m_yy_2,
     modes,
     multicomponent,
+    thin_film,
     q_1,
     q_2,
     sc_domain,
@@ -67,8 +68,8 @@ shutil.copy(f"./config.py", f"{sim_data_dir}/config.py")
 
 try:
     shutil.copy(
-        f"./batched_params.json", f"{sim_data_dir}/batched_params.json"
-        # f"./batched_params.json", f"{sim_output_dir}/batched_params.json"
+        f"./batched_params.json",
+        f"{sim_data_dir}/batched_params.json"
     )
 except:
     pass
@@ -115,7 +116,13 @@ if not args.noinit:
 
 # Generate the header file
 print("[*] Generating header.")
-write_header(N, dx, default_relaxation_step_number, multicomponent)
+write_header(
+    N=N,
+    dx=dx,
+    default_relaxation_step_number=default_relaxation_step_number,
+    multicomponent=multicomponent,
+    thin_film=thin_film,
+)
 
 # Compile binaries
 print("[*] Compiling binaries.")
