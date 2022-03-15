@@ -53,18 +53,16 @@ data_type = np.float32
 # Parse input
 parser = argparse.ArgumentParser(description="Initialization.")
 parser.add_argument("-d", "--debug", help="debug build", action="store_true")
-parser.add_argument("-n", "--noinit", help="No init", action="store_true")
+parser.add_argument("-ni", "--no-init", help="no initialization", action="store_true", dest="no_init")
+parser.add_argument("-rc", "--reload-continue", help="reload and continue", action="store_true", dest="rel_cont")
 args = parser.parse_args()
 
 # Makes simulation directory and copy the config file
 sim_data_dir = f"./simulations/{simulation_name}/"
-# sim_output_dir = f"./output/{simulation_name}/"
 
 os.makedirs(sim_data_dir, exist_ok=True)
-# os.makedirs(sim_output_dir, exist_ok=True)
 
 shutil.copy(f"./config.py", f"{sim_data_dir}/config.py")
-# shutil.copy(f"./config.py", f"{sim_output_dir}/config.py")
 
 try:
     shutil.copy(
@@ -78,7 +76,7 @@ except:
 print(f"Simulation name: {simulation_name}")
 
 # Generate initial guess
-if not args.noinit:
+if not args.no_init:
     print("[*] Generating init files. ")
     print("Saving input data...     ", end=" ")
     generate_init(

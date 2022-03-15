@@ -8,16 +8,30 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-fig, ax = plt.subplots()
+plt.style.use("mepgl.mplstyle")
+
+# Create axis
+fig, ax = plt.subplots(figsize=(4, 3), dpi = 200)
+
 (line,) = ax.plot([], [], ":+")
+ax.set_xlabel(r"$s$")
+ax.set_ylabel(r"$F(s)$")
 
-ax.set_title("MFEP")
-ax.set_xlabel("s")
-ax.set_ylabel("F")
+# Create empty variable
+e = np.array([])
 
-
-def update(frame):
-    e = np.loadtxt("energy.csv", delimiter=",")
+def update_frame(frame):
+    # Try to read new data
+    try:
+        e_new = np.loadtxt("energy.csv", delimiter=",")
+    except:
+        e_new = None
+    
+    # Save data if succesfully loaded
+    if e_new is not None:
+        e = e_new
+    
+    # Update plot
     F = e.shape[0]
     x = np.linspace(0, 1, F)
     line.set_data(x, e)
@@ -29,7 +43,7 @@ def update(frame):
     return (line,)
 
 
-animation = FuncAnimation(fig, update, interval=1000)
+animation = FuncAnimation(fig, update_frame, interval=1000)
 
 plt.show()
 

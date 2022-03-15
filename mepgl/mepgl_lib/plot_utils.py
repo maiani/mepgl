@@ -340,22 +340,33 @@ def mgl_plot(
     b_levels = np.linspace(np.nanmin(b), np.nanmax(b), 64)
     delta_levels = np.linspace(-np.pi, np.pi, 64)
 
-    fig = plt.figure(figsize=(2.2 * 3.375, 1.1 * 3.375))#, constrained_layout=True)
-    widths = [1, 0.05, 1, 0.05, 1.5]
-    heights = [0.05, 1, 1, 0.05, 1, 1]
-    gs = fig.add_gridspec(ncols=5, nrows=6, width_ratios=widths, height_ratios=heights,
-     left=0.1, right=0.9, bottom=0.1, top=0.9,
-                      wspace=0.05, hspace=0.05)
+    fig = plt.figure(figsize=(2 * 3.375, 1.2 * 3.375))
+    widths = [1, 1, 1.5]
+    heights = [1, 1]
+    gs = fig.add_gridspec(
+        ncols=3,
+        nrows=2,
+        width_ratios=widths,
+        height_ratios=heights,
+        #left=0.0,
+        #right=0.0,
+        #bottom=0.0,
+        #top=0.0,
+        wspace=0.1,
+        hspace=0.1,
+    )
 
     # UPPER LEFT
-    ax1 = fig.add_subplot(gs[1:3, 0])
+    ax1 = fig.add_subplot(gs[0, 0])
     ax1.set_aspect("equal")
-    im = ax1.contourf(x, y, psi_abs_1[n], levels=psi_abs_1_levels, cmap="viridis_r", zorder=-10)
+    im = ax1.contourf(
+        x, y, psi_abs_1[n], levels=psi_abs_1_levels, cmap="viridis_r", zorder=-10
+    )
     ax1.set_rasterization_zorder(0)
-    
-    cax1 = fig.add_subplot(gs[1:3, 1])
+
+    #cax1 = fig.add_subplot(gs[1:3, 1])
     cbar = fig.colorbar(
-        im, cax=cax1, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_1), 3)
+        im, ax=ax1, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_1), 3)
     )
 
     # U  = uniform_filter(j_x_1[n], delta)[::delta,::delta]
@@ -365,17 +376,19 @@ def mgl_plot(
     # V[np.abs(V) < 1e-5] = np.nan
     # ax1.quiver(X, Y, U, V, scale=50*np.max(np.sqrt(U**2+V**2)), color=[1,1,1,0.5])
 
-    #ax1.set_title(r"$|\psi_1|$")
+    # ax1.set_title(r"$|\psi_1|$")
 
     # UPPER RIGHT
-    ax2 = fig.add_subplot(gs[1:3, 2])
+    ax2 = fig.add_subplot(gs[0, 1])
     ax2.set_aspect("equal")
-    im = ax2.contourf(x, y, psi_abs_2[n], levels=psi_abs_2_levels, cmap="viridis_r", zorder=-10)
+    im = ax2.contourf(
+        x, y, psi_abs_2[n], levels=psi_abs_2_levels, cmap="viridis_r", zorder=-10
+    )
     ax2.set_rasterization_zorder(0)
-    divider = make_axes_locatable(ax2)
-    cax2 = fig.add_subplot(gs[1:3, 3])
+    
+    #cax2 = fig.add_subplot(gs[1:3, 3])
     cbar = fig.colorbar(
-        im, cax=cax2, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_2), 3)
+        im, ax=ax2, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_2), 3)
     )
 
     # U  = uniform_filter(j_x_2[n], delta)[::delta,::delta]
@@ -385,44 +398,47 @@ def mgl_plot(
     # V[np.abs(V) < 1e-5] = np.nan
     # ax2.quiver(X, Y, U, V, scale=50*np.max(np.sqrt(U**2+V**2)), color=[1,1,1,0.5])
 
-    #ax2.set_title(r"$|\psi_2|$")
+    # ax2.set_title(r"$|\psi_2|$")
 
     # LOWER LEFT
-    ax3 = fig.add_subplot(gs[4:6, 0])
+    ax3 = fig.add_subplot(gs[1, 0])
     ax3.set_aspect("equal")
-    im = ax3.contourf(x, y, psi_delta[n], levels=delta_levels, cmap="twilight", zorder=-10)
-    ax3.set_rasterization_zorder(0)
-    divider = make_axes_locatable(ax3)
-    cax3 = fig.add_subplot(gs[4:6, 1])
-    cbar = fig.colorbar(
-        im, cax=cax3, format="%1.1f", ticks=np.linspace(-np.pi, np.pi, 3)
+    im = ax3.contourf(
+        x, y, psi_delta[n], levels=delta_levels, cmap="twilight", zorder=-10
     )
-    #ax3.set_title(r"$\Delta \theta_{12}$")
+    ax3.set_rasterization_zorder(0)
+    
+    #cax3 = fig.add_subplot(gs[4:6, 1])
+    cbar = fig.colorbar(
+        im, ax=ax3, format="%1.1f", ticks=np.linspace(-np.pi, np.pi, 3)
+    )
+    # ax3.set_title(r"$\Delta \theta_{12}$")
 
     # LOWER RIGHT
-    ax4 = fig.add_subplot(gs[4:6, 2])
+    ax4 = fig.add_subplot(gs[1, 1])
     ax4.set_aspect("equal")
     im = ax4.contourf(x, y, b[n], levels=b_levels, cmap="jet", zorder=-10)
     ax4.set_rasterization_zorder(0)
-    divider = make_axes_locatable(ax4)
-    cax4 = fig.add_subplot(gs[4:6, 3])
+    
+    #cax4 = fig.add_subplot(gs[4:6, 3])
     cbar = fig.colorbar(
-        im, cax=cax4, format="%1.1f", ticks=np.linspace(np.nanmin(b), np.nanmax(b), 3)
+        im, ax=ax4, format="%1.1f", ticks=np.linspace(np.nanmin(b), np.nanmax(b), 3)
     )
-    #ax4.set_title(r"$B_z$")
+    # ax4.set_title(r"$B_z$")
 
     # RIGHT
-    ax5 = fig.add_subplot(gs[2:5, 4])
+    ax5 = fig.add_subplot(gs[0, 2])
     ax5.plot(s, fenergy, ".-")
     ax5.scatter(s[n], fenergy[n], color="C3")
     deltaf = np.max(fenergy) - np.min(fenergy)
     ax5.set_xlim(-0.1, 1.1)
     ax5.set_ylim(np.min(fenergy) - 0.05 * deltaf, np.max(fenergy) + 0.05 * deltaf)
-    ax5.set_xlabel(r"s")
-    ax5.set_ylabel(r"F(s)")
+    ax5.set_xlabel(r"$s$")
+    ax5.set_ylabel(r"$F(s)$")
     ax5.set_title(r"Minimum Energy Path")
+    ax5.set_xlim(0, 1)
 
-    #gs.tight_layout(fig, rect=[0, 0, 1, 1], h_pad=0.005, w_pad=0.005)
+    gs.tight_layout(fig)#, rect=[0, 0, 1, 1], h_pad=0.005, w_pad=0.005)
 
     return fig
 
@@ -458,16 +474,7 @@ def complex_plot(x, y, psi_abs, psi_theta):
 
 
 def gl_plot(
-    n,
-    x,
-    y,
-    fenergy,
-    s,
-    psi_abs_1,
-    psi_theta_1,
-    j_x_1,
-    j_y_1,
-    b,
+    n, x, y, fenergy, s, psi_abs_1, psi_theta_1, j_x_1, j_y_1, b,
 ):
 
     nx, ny = x.shape
@@ -482,16 +489,27 @@ def gl_plot(
     fig = plt.figure(figsize=(2.2 * 3.375, 1.1 * 3.375))
     widths = [1, 0.05, 1, 0.05, 1.5]
     heights = [0.05, 1, 1, 0.05, 1, 1]
-    gs = fig.add_gridspec(ncols=5, nrows=6, width_ratios=widths, height_ratios=heights,
-     left=0.1, right=0.9, bottom=0.1, top=0.9,
-                      wspace=0.05, hspace=0.05)
+    gs = fig.add_gridspec(
+        ncols=5,
+        nrows=6,
+        width_ratios=widths,
+        height_ratios=heights,
+        left=0.1,
+        right=0.9,
+        bottom=0.1,
+        top=0.9,
+        wspace=0.05,
+        hspace=0.05,
+    )
 
     # UPPER LEFT
     ax1 = fig.add_subplot(gs[1:3, 0])
     ax1.set_aspect("equal")
-    im = ax1.contourf(x, y, psi_abs_1[n], levels=psi_abs_1_levels, cmap="viridis_r", zorder=-10)
+    im = ax1.contourf(
+        x, y, psi_abs_1[n], levels=psi_abs_1_levels, cmap="viridis_r", zorder=-10
+    )
     ax1.set_rasterization_zorder(0)
-    
+
     cax1 = fig.add_subplot(gs[1:3, 1])
     cbar = fig.colorbar(
         im, cax=cax1, format="%1.1f", ticks=np.linspace(0, np.nanmax(psi_abs_1), 3)
@@ -504,7 +522,7 @@ def gl_plot(
     # V[np.abs(V) < 1e-5] = np.nan
     # ax1.quiver(X, Y, U, V, scale=50*np.max(np.sqrt(U**2+V**2)), color=[1,1,1,0.5])
 
-    #ax1.set_title(r"$|\psi_1|$")
+    # ax1.set_title(r"$|\psi_1|$")
 
     # UPPER RIGHT
     # ax2 = fig.add_subplot(gs[1:3, 2])
@@ -524,7 +542,7 @@ def gl_plot(
     # V[np.abs(V) < 1e-5] = np.nan
     # ax2.quiver(X, Y, U, V, scale=50*np.max(np.sqrt(U**2+V**2)), color=[1,1,1,0.5])
 
-    #ax2.set_title(r"$|\psi_2|$")
+    # ax2.set_title(r"$|\psi_2|$")
 
     # LOWER LEFT
     # ax3 = fig.add_subplot(gs[4:6, 0])
@@ -536,7 +554,7 @@ def gl_plot(
     # cbar = fig.colorbar(
     #     im, cax=cax3, format="%1.1f", ticks=np.linspace(-np.pi, np.pi, 3)
     # )
-    #ax3.set_title(r"$\Delta \theta_{12}$")
+    # ax3.set_title(r"$\Delta \theta_{12}$")
 
     # LOWER RIGHT
     ax4 = fig.add_subplot(gs[4:6, 2])
@@ -548,7 +566,7 @@ def gl_plot(
     cbar = fig.colorbar(
         im, cax=cax4, format="%1.1f", ticks=np.linspace(np.nanmin(b), np.nanmax(b), 3)
     )
-    #ax4.set_title(r"$B_z$")
+    # ax4.set_title(r"$B_z$")
 
     # RIGHT
     ax5 = fig.add_subplot(gs[2:5, 4])
@@ -561,7 +579,7 @@ def gl_plot(
     ax5.set_ylabel(r"F(s)")
     ax5.set_title(r"Minimum Energy Path")
 
-    #gs.tight_layout(fig, rect=[0, 0, 1, 1], h_pad=0.005, w_pad=0.005)
+    # gs.tight_layout(fig, rect=[0, 0, 1, 1], h_pad=0.005, w_pad=0.005)
 
     return fig
 
@@ -704,18 +722,19 @@ def current_plot(x, y, j_x, j_y, scale=None, borders=None):
 
 ################################## STATIC PLOT MULTICOMPONENT ##################################
 
+
 def pseudospin_plot(x, y, psi_abs_1, psi_abs_2, theta_12):
     """
     Plot the pseudospin for a multicomponent simulation.
     """
 
-    n = psi_abs_1**2 + psi_abs_2**2
-    Sx = psi_abs_1*psi_abs_2/n * np.cos(theta_12)
-    Sy = psi_abs_1*psi_abs_2/n * np.sin(theta_12)
-    Sz = (psi_abs_1**2 - psi_abs_2**2)/n
+    n = psi_abs_1 ** 2 + psi_abs_2 ** 2
+    Sx = psi_abs_1 * psi_abs_2 / n * np.cos(theta_12)
+    Sy = psi_abs_1 * psi_abs_2 / n * np.sin(theta_12)
+    Sz = (psi_abs_1 ** 2 - psi_abs_2 ** 2) / n
 
     fig, ax = plt.subplots()
-    
+
     nx, ny = x.shape
 
     delta = int(nx // 50)
@@ -728,7 +747,7 @@ def pseudospin_plot(x, y, psi_abs_1, psi_abs_2, theta_12):
 
     norm = colors.Normalize(vmin=-1.0, vmax=1.0)
 
-    im = ax.quiver(X, Y, U, V, W, scale=10, pivot='mid', cmap = 'turbo', norm=norm)
+    im = ax.quiver(X, Y, U, V, W, scale=10, pivot="mid", cmap="turbo", norm=norm)
 
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="5%", pad=0.1)
@@ -738,8 +757,8 @@ def pseudospin_plot(x, y, psi_abs_1, psi_abs_2, theta_12):
 
     ax.set_xlabel(r"$x$")
     ax.set_ylabel(r"$y$")
-    
-    ax.set_xlim( 1, 5)
+
+    ax.set_xlim(1, 5)
     ax.set_ylim(-2, 2)
 
     fig.tight_layout()
@@ -752,26 +771,26 @@ def pseudospin_plot_3D(x, y, psi_abs_1, psi_abs_2, theta_12):
     Plot the pseudospin for a multicomponent simulation, 3D version.
     """
 
-    n = psi_abs_1**2 + psi_abs_2**2
-    Sx = psi_abs_1*psi_abs_2/n * np.cos(theta_12)
-    Sy = psi_abs_1*psi_abs_2/n * np.sin(theta_12)
-    Sz = (psi_abs_1**2 - psi_abs_2**2)/n
+    n = psi_abs_1 ** 2 + psi_abs_2 ** 2
+    Sx = psi_abs_1 * psi_abs_2 / n * np.cos(theta_12)
+    Sy = psi_abs_1 * psi_abs_2 / n * np.sin(theta_12)
+    Sz = (psi_abs_1 ** 2 - psi_abs_2 ** 2) / n
 
     fig = plt.figure()
     ax: Axes3D = fig.add_subplot(111, projection="3d")
-    
+
     nx, ny = x.shape
 
     delta = int(nx / 16)
 
-    X = x[nx//2::delta, ny//4:-ny//4:delta]
-    Y = y[nx//2::delta, ny//4:-ny//4:delta]
+    X = x[nx // 2 :: delta, ny // 4 : -ny // 4 : delta]
+    Y = y[nx // 2 :: delta, ny // 4 : -ny // 4 : delta]
 
-    U = uniform_filter(Sx, delta)[nx//2::delta, ny//4:-ny//4:delta]
-    V = uniform_filter(Sy, delta)[nx//2::delta, ny//4:-ny//4:delta]
-    W = uniform_filter(Sz, delta)[nx//2::delta, ny//4:-ny//4:delta]
+    U = uniform_filter(Sx, delta)[nx // 2 :: delta, ny // 4 : -ny // 4 : delta]
+    V = uniform_filter(Sy, delta)[nx // 2 :: delta, ny // 4 : -ny // 4 : delta]
+    W = uniform_filter(Sz, delta)[nx // 2 :: delta, ny // 4 : -ny // 4 : delta]
 
-    L = np.sqrt(U**2 + V**2 + W**2)
+    L = np.sqrt(U ** 2 + V ** 2 + W ** 2)
 
     ax.quiver(X, Y, 0, U, V, W)
     ax.set_zlim([-2, 2])
