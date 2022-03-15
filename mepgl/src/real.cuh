@@ -1,7 +1,7 @@
 #ifndef REAL_CUH
 #define REAL_CUH
 
-#define DOUBLE_PRECISION
+// #define DOUBLE_PRECISION
 
 // Type definition
 #ifdef DOUBLE_PRECISION

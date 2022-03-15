@@ -9,20 +9,23 @@ import subprocess
 import numpy as np
 
 ## Change for single/double precision
-data_type = np.float64
-# data_type = np.float32
+# data_type = np.float64
+data_type = np.float32
 
 # Device number
 dev_number = 0
 
-# Header functions
+## Header functions
 
-def generate_header(N, dx, default_relaxation_step_number, multicomponent):
+def generate_header(
+    N, dx, default_relaxation_step_number, multicomponent, thin_film=False
+):
     """
     Generate the config.cuh header.
     """
 
     multicomponent_str = "" if multicomponent else "//"
+    thin_film_str = "" if thin_film else "//"
 
     config_cuh = (
         f"""#ifndef CONFIG_CUH                                                                      \n"""
@@ -42,6 +45,9 @@ def generate_header(N, dx, default_relaxation_step_number, multicomponent):
         f"""                                                                                        \n"""
         f"""// Multicomponent                                                                       \n"""
         f"""{multicomponent_str}#define MULTICOMPONENT                                              \n"""
+        f"""                                                                                        \n"""
+        f""" // Neglect self field (for thin films)                                                 \n"""
+        f"""{thin_film_str}#define NO_SELF_FIELD                                                    \n"""
         f"""                                                                                        \n"""
         f"""// Number of point for side                                                             \n"""
         f"""constexpr int N = {N};                                                                  \n"""
@@ -63,13 +69,17 @@ def generate_header(N, dx, default_relaxation_step_number, multicomponent):
     return config_cuh
 
 
-def write_header(N, dx, default_relaxation_step_number, multicomponent):
+def write_header(N, dx, default_relaxation_step_number, multicomponent, thin_film):
     """
     Write the config.cuh header.
     """
 
     config_cuh = generate_header(
-        N, dx, default_relaxation_step_number, multicomponent
+        N=N,
+        dx=dx,
+        default_relaxation_step_number=default_relaxation_step_number,
+        multicomponent=multicomponent,
+        thin_film=thin_film,
     )
     config_cuh_file = open("./src/config.cuh", "w+")
     config_cuh_file.write(config_cuh)
@@ -210,4 +220,3 @@ def generate_init(
         if multicomponent:
             np.save(input_dir + f"{n}/u_2.npy", u_2[n].astype(data_type))
             np.save(input_dir + f"{n}/v_2.npy", v_2[n].astype(data_type))
-

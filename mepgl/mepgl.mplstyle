@@ -1,0 +1,50 @@
+figure.figsize      : 3.375, 2
+figure.dpi          : 1000
+
+# Font
+mathtext.fontset    : stix
+font.family         : STIXGeneral
+font.size           : 8
+axes.titlesize      : 8 
+axes.labelsize      : 8
+legend.fontsize     : 7
+xtick.labelsize     : 8
+ytick.labelsize     : 8
+# text.usetex         : False
+# text.latex.preamble : \usepackage{lmodern, sfmath}
+
+
+# Plot style
+xtick.direction     : in
+ytick.direction     : in
+axes.linewidth      : 0.4
+axes.grid           : False
+lines.linewidth     : 0.5
+lines.linestyle     : -
+lines.marker        : .
+lines.markersize    : 5
+legend.frameon      : False
+legend.fancybox     : False
+legend.edgecolor    : black
+legend.framealpha   : 1.0
+legend.handlelength : 1.0
+legend.columnspacing : 0.5
+legend.handletextpad : 0.3
+
+# Ticks
+xtick.major.size:    2.5     # major tick size in points
+xtick.minor.size:    1      # minor tick size in points
+xtick.major.width:   0.6     # major tick width in points
+xtick.minor.width:   0.6     # minor tick width in points
+xtick.minor.visible: False   # visibility of minor ticks on y-axis
+
+ytick.major.size:    2.5     # major tick size in points
+ytick.minor.size:    1       # minor tick size in points
+ytick.major.width:   0.6     # major tick width in points
+ytick.minor.width:   0.6     # minor tick width in points
+ytick.minor.visible: False   # visibility of minor ticks on y-axis
+
+
+# Saving
+savefig.bbox : tight
+savefig.pad_inches : 0.05

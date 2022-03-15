@@ -12,16 +12,14 @@ import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-from mepgl_lib import set_rcparams
 from mepgl_lib.gl_utils import compute_winding
-from mepgl_lib.plot_utils import mgl_plot, pseudospin_plot
+from mepgl_lib.plot_utils import gl_plot, mgl_plot, pseudospin_plot
 
 ############ SETTINGS #############################
 
 # Multicomponent
 mgl_plt = True
-pseudospin_plt = False
-
+pseudospin_plt = True
 
 ###################################################
 
@@ -141,6 +139,8 @@ for n in range(F):
 w_1 = compute_winding(u_1, v_1)
 if multicomponent:
     w_2 = compute_winding(u_2, v_2)
+else:
+    w_2 = None
 
 # Saving data
 np.savez(simulation_dir + f"{simulation_name}.npz", fenergy=fenergy,
@@ -155,12 +155,11 @@ print(" done.")
     
 # Make a directory for the plots
 plot_dir = "./simulations/"+simulation_name+"/plots/"
+os.makedirs(plot_dir, exist_ok = True)
 
 # Remove old output
 #if os.path.exists(plot_dir):
 #    shutil.rmtree(plot_dir)
-
-os.makedirs(plot_dir, exist_ok = True)
 
 ## Plotting stats
 ## iter_axis = np.arange(0, f_opt.shape[1])
@@ -206,7 +205,8 @@ ax.plot(s, fenergy, '-C3', linewidth=1, label=r"$F$")
 ax2 = ax.twinx()
 ax2.set_ylabel(r'$N$')
 ax2.plot(s, w_1, '-', linewidth=0.6, label=r"$N_1$")
-ax2.plot(s, w_2, '-C2', linewidth=0.6, label=r"$N_2$")
+if multicomponent:
+    ax2.plot(s, w_2, '-C2', linewidth=0.6, label=r"$N_2$")
 
 fig.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
 fig.tight_layout()
@@ -218,7 +218,8 @@ fig, ax = plt.subplots()
 ax.set_xlabel(r'$s$')
 ax.set_ylabel(r'$N$')
 ax.plot(s, w_1, '.-', label=r"$N_1$")
-ax.plot(s, w_2, '.-', label=r"$N_2$")
+if multicomponent:
+    ax.plot(s, w_2, '.-', label=r"$N_2$")
 ax2 = ax.twinx()
 ax2.set_ylabel(r'$\Phi$')
 ax2.plot(s, phi, '.-C3')
@@ -241,6 +242,8 @@ if multicomponent:
         os.makedirs(plot_dir + "all/", exist_ok = True)
     if pseudospin_plt: 
         os.makedirs(plot_dir + "pseudospin/", exist_ok = True)
+else:
+    os.makedirs(plot_dir + "all/", exist_ok = True)
 
 #fig, ax = plot_single(x, y, fenergy, psi_abs*sc_mask, b*comp_mask, j_x_1, j_y_1)
 #fig.savefig(plot_dir + "single.png", dpi=500)
@@ -275,14 +278,19 @@ for n in tqdm(range(F)):
 
     if multicomponent:
         if mgl_plt:
-            fig = mgl_plot(n, x, y, fenergy, s_ph, psi_abs_1, psi_theta_1, j_x_1, j_x_2, psi_abs_2, psi_theta_2, j_x_2, j_y_2, b)
-            fig.savefig(plot_dir + f"all/{str_n }.png", dpi=1000)
+            fig = mgl_plot(n, x, y, fenergy, s_ph, psi_abs_1, psi_theta_1, j_x_1, j_y_1, psi_abs_2, psi_theta_2, j_x_2, j_y_2, b)
+            fig.savefig(plot_dir + f"all/{str_n}.png", dpi=1000)
             plt.close(fig)
 
         if pseudospin_plt:
             fig, ax = pseudospin_plot(x, y, psi_abs_1[n], psi_abs_2[n], psi_theta_12[n])
-            fig.savefig(plot_dir + f"pseudospin/{str_n }.png", dpi=1000)
+            fig.savefig(plot_dir + f"pseudospin/{str_n}.png", dpi=1000)
             plt.close(fig)
+
+    else:
+        fig = gl_plot(n, x, y, fenergy, s_ph, psi_abs_1, psi_theta_1, j_x_1, j_y_1, b)
+        fig.savefig(plot_dir + f"all/{str_n}.png", dpi=1000)
+        plt.close(fig)
 
         # complex_plot(x, y, psi_abs_2[n]*sc_mask, psi_theta_2[n]*sc_mask)
         # plt.savefig(plot_dir + f"psi_2/{str_n }-psi_2.png", bbox_inches="tight")

@@ -16,6 +16,9 @@ const int devNumber = 0;
 // Multicomponent                                                                       
 #define MULTICOMPONENT                                              
                                                                                         
+ // Neglect self field (for thin films)                                                 
+//#define NO_SELF_FIELD                                                    
+                                                                                        
 // Number of point for side                                                             
 constexpr int N = 401;                                                                  
                                                                                         
@@ -26,7 +29,7 @@ constexpr int blockSizeX = 1024;
 #endif                                                                                  
                                                                                         
 constexpr int gridSizeX = (int)((N*N)/blockSizeX + 1);                                  
-constexpr real dx = 0.020000000000000018;                                                               
+constexpr real dx = 0.03000000000000025;                                                               
                                                                                         
 constexpr int default_relaxation_step_number = 10;        
                                                                                         

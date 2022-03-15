@@ -34,6 +34,7 @@ from config import (
     m_yy_2,
     modes,
     multicomponent,
+    thin_film,
     q_1,
     q_2,
     sc_domain,
@@ -52,22 +53,30 @@ data_type = np.float32
 # Parse input
 parser = argparse.ArgumentParser(description="Initialization.")
 parser.add_argument("-d", "--debug", help="debug build", action="store_true")
-parser.add_argument("-n", "--noinit", help="No init", action="store_true")
+parser.add_argument("-ni", "--no-init", help="no initialization", action="store_true", dest="no_init")
+parser.add_argument("-rc", "--reload-continue", help="reload and continue", action="store_true", dest="rel_cont")
 args = parser.parse_args()
 
 # Makes simulation directory and copy the config file
-sim_dir_name = f"./simulations/{simulation_name}/"
-os.makedirs(sim_dir_name, exist_ok=True)
-shutil.copy(f"./config.py", f"./simulations/{simulation_name}/config.py")
+sim_data_dir = f"./simulations/{simulation_name}/"
+
+os.makedirs(sim_data_dir, exist_ok=True)
+
+shutil.copy(f"./config.py", f"{sim_data_dir}/config.py")
+
 try:
     shutil.copy(
-        f"./batched_params.json", f"./simulations/{simulation_name}/batched_params.json"
+        f"./batched_params.json",
+        f"{sim_data_dir}/batched_params.json"
     )
 except:
     pass
 
+
+print(f"Simulation name: {simulation_name}")
+
 # Generate initial guess
-if not args.noinit:
+if not args.no_init:
     print("[*] Generating init files. ")
     print("Saving input data...     ", end=" ")
     generate_init(
@@ -100,20 +109,28 @@ if not args.noinit:
         y,
     )
     print("done")
-
-    # Generate the header file
-    print("[*] Generating header.")
-    write_header(N, dx, default_relaxation_step_number, multicomponent)
-
-    # Compile binaries
-    print("[*] Compiling binaries.")
-    if args.debug:
-        subprocess.run(["bash", "./compile.sh", "--debug"])
-    else:
-        subprocess.run(["bash", "./compile.sh"])
-
     print("===> Initialization finished <==")
     print("")
+
+# Generate the header file
+print("[*] Generating header.")
+write_header(
+    N=N,
+    dx=dx,
+    default_relaxation_step_number=default_relaxation_step_number,
+    multicomponent=multicomponent,
+    thin_film=thin_film,
+)
+
+# Compile binaries
+print("[*] Compiling binaries.")
+if args.debug:
+    subprocess.run(["bash", "./compile.sh", "--debug"])
+else:
+    subprocess.run(["bash", "./compile.sh"])
+
+print("===> Compilation finished <==")
+print("")
 
 print("[*] Running simulation. ")
 launch_simulation(simulation_name, F, iterations, modes)
