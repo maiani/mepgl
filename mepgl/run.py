@@ -46,7 +46,7 @@ from config import (
     x,
     y,
 )
-from mepgl_lib.launcher_utils import generate_init, launch_simulation, write_header
+from mepgl_lib.launcher_utils import generate_init, launch_simulation, write_header, generate_launcher
 
 data_type = np.float32
 
@@ -57,28 +57,25 @@ parser.add_argument("-ni", "--no-init", help="no initialization", action="store_
 parser.add_argument("-rc", "--reload-continue", help="reload and continue", action="store_true", dest="rel_cont")
 args = parser.parse_args()
 
-# Makes simulation directory and copy the config file
 sim_data_dir = f"./simulations/{simulation_name}/"
-
-os.makedirs(sim_data_dir, exist_ok=True)
-
-shutil.copy(f"./config.py", f"{sim_data_dir}/config.py")
-
-try:
-    shutil.copy(
-        f"./batched_params.json",
-        f"{sim_data_dir}/batched_params.json"
-    )
-except:
-    pass
-
-
 print(f"Simulation name: {simulation_name}")
 
 # Generate initial guess
-if not args.no_init:
+if not (args.no_init or args.rel_cont):
+
+    # Makes simulation directory and copy the config file
+    os.makedirs(sim_data_dir, exist_ok=True)
+    shutil.copy(f"./config.py", f"{sim_data_dir}/config.py")
+    try:
+        shutil.copy(
+            f"./batched_params.json",
+            f"{sim_data_dir}/batched_params.json"
+        )
+    except:
+        pass
+        
     print("[*] Generating init files. ")
-    print("Saving input data...     ", end=" ")
+    print("Saving input data...    ", end="")
     generate_init(
         F,
         a_1,
@@ -108,32 +105,40 @@ if not args.no_init:
         x,
         y,
     )
-    print("done")
-    print("===> Initialization finished <==")
+    print("done.")
+    print("==> Initialization finished.")
     print("")
 
-# Generate the header file
-print("[*] Generating header.")
-write_header(
-    N=N,
-    dx=dx,
-    default_relaxation_step_number=default_relaxation_step_number,
-    multicomponent=multicomponent,
-    thin_film=thin_film,
-)
+    # Generate the header file
+    print("[*] Generating header.")
+    write_header(
+        N=N,
+        dx=dx,
+        default_relaxation_step_number=default_relaxation_step_number,
+        multicomponent=multicomponent,
+        thin_film=thin_film,
+    )
 
-# Compile binaries
-print("[*] Compiling binaries.")
-if args.debug:
-    subprocess.run(["bash", "./compile.sh", "--debug"])
-else:
-    subprocess.run(["bash", "./compile.sh"])
+    # Compile binaries
+    print("[*] Compiling binaries.")
+    if args.debug:
+        subprocess.run(["bash", "./compile.sh", "--debug"])
+    else:
+        subprocess.run(["bash", "./compile.sh"])
 
-print("===> Compilation finished <==")
-print("")
+    print("==> Compilation finished.")
+    print("")
 
-print("[*] Running simulation. ")
+if args.rel_cont:    
+    print("Reloading simulation data...   ", end="")
+    shutil.rmtree(f"./simulations/{simulation_name}/input_data")
+    shutil.copytree(f"./simulations/{simulation_name}/output_data", f"./simulations/{simulation_name}/input_data")
+    print("done.")
+    print("")
+
+print("[*] Running simulation.")
+#generate_launcher(simulation_name, F, iterations, modes)
 launch_simulation(simulation_name, F, iterations, modes)
 
-print("[*] Post processing. ")
+print("[*] Post processing.")
 subprocess.run(["python", "./post.py"])

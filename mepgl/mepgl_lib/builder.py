@@ -134,12 +134,12 @@ class StringBuilder:
         u_2 = np.ones((self.F, self.Nx, self.Ny))
         v_2 = np.ones((self.F, self.Nx, self.Ny))
 
-        for xv, yv, wv in self.vortices_1:
+        for N in range(self.F):
         
-            for N in range(self.F):
-
-                psi_abs = psi_abs_1 + 0 * self.x
-                psi_theta = 0 * self.x
+            psi_abs = psi_abs_1 + 0 * self.x
+            psi_theta = 0 * self.x
+            
+            for xv, yv, wv in self.vortices_1:
 
                 if wv[N] != 0:
                     r_i = np.sqrt(
@@ -150,23 +150,22 @@ class StringBuilder:
                         y - yv[N], x - xv[N],
                     )
 
-                u_1[N] = (
-                    psi_abs * np.cos(psi_theta) + noise * np.random.randn(self.Nx, self.Ny)
-                ) * sc_domain
-                v_1[N] = (
-                    psi_abs * np.sin(psi_theta) + noise * np.random.randn(self.Nx, self.Ny)
-                ) * sc_domain
+            u_1[N] = (
+                psi_abs * np.cos(psi_theta) + noise * np.random.randn(self.Nx, self.Ny)
+            ) * sc_domain
 
-            # Second component
-        if self.multicomponent:
+            v_1[N] = (
+                psi_abs * np.sin(psi_theta) + noise * np.random.randn(self.Nx, self.Ny)
+            ) * sc_domain
 
-            for xv, yv, wv in self.vortices_2:
+                # Second component
+            if self.multicomponent:
 
-                for N in range(self.F):
-
-                    psi_abs = psi_abs_2 + 0 * self.x
-                    psi_theta = self.phase_fun(self.x, self.y)
-
+                psi_abs = psi_abs_2 + 0 * self.x
+                psi_theta = self.phase_fun(self.x, self.y)
+                
+                for xv, yv, wv in self.vortices_2:
+                    
                     if wv[N] != 0:
                         r_i = np.sqrt(
                             (self.x - xv[N]) ** 2
@@ -176,19 +175,16 @@ class StringBuilder:
                         psi_theta += wv[N] * np.arctan2(
                             self.y - yv[N], self.x - xv[N]
                         )
-                    
-                    u_2[N] = (
-                        psi_abs * np.cos(psi_theta)
-                        + noise * np.random.randn(self.Nx, self.Ny)
-                    ) * sc_domain
-                    v_2[N] = (
-                        psi_abs * np.sin(psi_theta)
-                        + noise * np.random.randn(self.Nx, self.Ny)
-                    ) * sc_domain
+                
+                u_2[N] = (
+                    psi_abs * np.cos(psi_theta)
+                    + noise * np.random.randn(self.Nx, self.Ny)
+                ) * sc_domain
 
-        else:
-            u_2 = None
-            v_2 = None
+                v_2[N] = (
+                    psi_abs * np.sin(psi_theta)
+                    + noise * np.random.randn(self.Nx, self.Ny)
+                ) * sc_domain
 
         return u_1, v_1, u_2, v_2
 
