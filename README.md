@@ -2,10 +2,7 @@
 
 Gauged string method for the computation of minimum energy paths (MEP) in Ginzburg-Landau (GL) models for superconductors and superfluids.
 
-<video width="100%">
-    <source src="cover.webm" type="video/webm">
-    <img src="cover.png" width="100%" />
-</video>
+<img src="cover.gif" width="100%" />
 
 This code is able to compute minimum energy paths of system described by the free energy
 <img src="https://render.githubusercontent.com/render/math?math=F[\mathbf{A}, \psi_1, \psi_2] = \sum_{\alpha=1,2} [ \sum_{k=x,y} \frac{|D_{k} \psi_\alpha|^2}{2 m_{\alpha,kk}} %2B \frac{b_\alpha}{2} ( \frac{a_\alpha}{b_\alpha} %2B |\psi_\alpha|^2)^2] %2B \frac{1}{2}(\nabla \times \mathbf{A} - \mathbf{H})^2 %2B V_{\mathrm{int}}(\psi_1, \psi_2)">
