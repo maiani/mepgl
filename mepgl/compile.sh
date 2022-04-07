@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 export CMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
 
@@ -15,7 +15,7 @@ done
 
 
 if [ "$DEBUG" = "1" ]; then
-	echo "==> Builidin debug binaries"
+	echo "==> Builidin debug binaries."
     echo ""
 
     mkdir -p ./build/debug
@@ -26,7 +26,7 @@ if [ "$DEBUG" = "1" ]; then
     cp -f ./build/debug/mepgl ./mepgl
 
 else
-	echo "==> Builiding release binaries"
+	echo "==> Builiding release binaries."
     echo ""
 
     mkdir -p ./build/release
