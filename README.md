@@ -31,7 +31,7 @@ conda env create -f environment.yml
 conda activate mepgl
 ```
 
-You need to activate the `mepgl` environment each session, before running the code.
+You need to activate the `mepgl` environment in each session, before running the code.
 
 ### Setting precision
 To set the numeric precision, you need to edit `./src/real.cuh` and `./mepgl_lib/launcher_utils.py`
@@ -43,8 +43,10 @@ Some example configuration files are included in the `examples` folder.
 
 ### Run the program
 
-Once the config file is set up, just run the simulation with `./run.py`.
-If you need to run it in debug mode: `./run.py --debug` 
+Once the config file is set up, just run the simulation with `./run.py`. 
+If you need to run it in debug mode: `./run.py --debug` or `./run.py --d`
+If you want to skip the generation of the initial guess: `./run.py --no-init` or `./run.py -ni` 
+If you want to reload the output of the simulation and continue the optimization: `./run.py --reload-continue` or `./run.py -rc` 
 
 Runtime commands (press the key and then Enter):
 - `+` and `-` change the number of relaxation steps.
@@ -52,21 +54,19 @@ Runtime commands (press the key and then Enter):
 - `C` switch on and off NLCG.
 
 The results of the simulation can be found in the `./simulations` folder under a directory with the name of the simulation.
- 
-### Run simulations in batches
+
 To run simulations in batches the `./batch_run.py` file can be used. You will need to edit it and the config file.
 
-### Other options
-- If you want to continue a simulation run `./reload.py` to load the output of the previous run as initial guess, 
+If you want to continue a simulation run `./reload.py` to load the output of the previous run as initial guess, 
 then run the simulation with `./run.py --noinit` to prevent overwriting the input files.
 
-- You can check the mep in real-time while the simulation is running using `./rtanim.py`. 
+You can check the mep in real-time while the simulation is running using `./rtanim.py`. 
 
 ## References
 This code has been used for the following papers:
 
 * \[1\] Benfenati A., Maiani A., Rybakov F. N., Bababev E. - *Vortex nucleation barrier revisited* - https://arxiv.org/abs/1911.09513
-* \[2\] Maiani A., Benfenati A., Bababev E. - *Vortex nucleation barriers and surface fractional vortices in two-component Ginzburg-Landau model* 
+* \[2\] Maiani A., Benfenati A., Bababev E. - *Vortex nucleation barriers and stable fractional vortices near boundaries in multicomponent superconductors* - https://arxiv.org/abs/2111.01061
 
 If you use this code, please cite it as 
 
@@ -86,14 +86,13 @@ year = {2020}
 }
 ```
 
-
 ## Built With
 
 * [cnpy](https://github.com/rogersce/cnpy) - Library used to save the data in Numpy format
 
 ## Authors
 
-* **Andrea Maiani** <andrea.maiani@nbi.ku.dk> - [skdys](https://github.com/skdys)
+* **Andrea Maiani** <andrea.maiani@nbi.ku.dk> - [maiani](https://github.com/maiani)
 
 ## License
 

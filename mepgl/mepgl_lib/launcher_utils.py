@@ -8,25 +8,70 @@ import subprocess
 
 import numpy as np
 
-## Change for single/double precision
-# data_type = np.float64
-data_type = np.float32
-
-# Device number
-dev_number = 0
-
 ## Header functions
 
-def generate_header(
-    N, dx, default_relaxation_step_number, multicomponent, thin_film=False
+
+def generate_headers(
+    N,
+    dx,
+    default_relaxation_step_number,
+    multicomponent,
+    thin_film=False,
+    double_precision=False,
+    dev_number=0,
 ):
     """
-    Generate the config.cuh header.
+    Generate the headers.
     """
 
+    new_headers = False
+
+    # Real.cuh header
+
+    doubl_precision_str = "" if double_precision else "//"
+    real_cuh = (
+        f"""#ifndef REAL_CUH                                \n"""
+        f"""#define REAL_CUH                                \n"""
+        f"""                                                \n"""
+        f"""{doubl_precision_str}#define DOUBLE_PRECISION   \n"""
+        f"""                                                \n"""
+        f"""// Type definition                              \n"""
+        f"""#ifdef DOUBLE_PRECISION                         \n"""
+        f"""                                                \n"""
+        f"""typedef double real;                            \n"""
+        f"""                                                \n"""
+        f"""#ifdef __CUDACC__                               \n"""
+        f"""typedef double2 real2;                          \n"""
+        f"""typedef double4 real4;                          \n"""
+        f"""#endif                                          \n"""
+        f"""                                                \n"""
+        f"""#else                                           \n"""
+        f"""                                                \n"""
+        f"""typedef float real;                             \n"""
+        f"""                                                \n"""
+        f"""#ifdef __CUDACC__                               \n"""
+        f"""typedef float2 real2;                           \n"""
+        f"""typedef float4 real4;                           \n"""
+        f"""#endif                                          \n"""
+        f"""                                                \n"""
+        f"""#endif                                          \n"""
+        f"""                                                \n"""
+        f"""#endif // REAL_CUH                              \n"""
+    )
+
+    old_real_cuh = ""
+    if os.path.exists("./src/real.cuh"):
+        with open("./src/real.cuh", "r") as real_cuh_file:
+            old_real_cuh = real_cuh_file.read()
+
+    if old_real_cuh != real_cuh:
+        with open("./src/real.cuh", "w+") as real_cuh_file:
+            real_cuh_file.write(real_cuh)
+        new_headers = True
+
+    # config.cuh header
     multicomponent_str = "" if multicomponent else "//"
     thin_film_str = "" if thin_film else "//"
-
     config_cuh = (
         f"""#ifndef CONFIG_CUH                                                                      \n"""
         f"""#define CONFIG_CUH                                                                      \n"""
@@ -66,24 +111,17 @@ def generate_header(
         f"""#endif // CONFIG_CUH                                                                    \n"""
     )
 
-    return config_cuh
+    old_config_cuh = ""
+    if os.path.exists("./src/config.cuh"):
+        with open("./src/config.cuh", "r") as config_cuh_file:
+            old_config_cuh = config_cuh_file.read()
 
+    if old_config_cuh != config_cuh:
+        with open("./src/config.cuh", "w+") as config_cuh_file:
+            config_cuh_file.write(config_cuh)
+        new_headers = True
 
-def write_header(N, dx, default_relaxation_step_number, multicomponent, thin_film):
-    """
-    Write the config.cuh header.
-    """
-
-    config_cuh = generate_header(
-        N=N,
-        dx=dx,
-        default_relaxation_step_number=default_relaxation_step_number,
-        multicomponent=multicomponent,
-        thin_film=thin_film,
-    )
-    config_cuh_file = open("./src/config.cuh", "w+")
-    config_cuh_file.write(config_cuh)
-    config_cuh_file.close()
+    return new_headers
 
 
 # Launcher functions
@@ -182,7 +220,13 @@ def generate_init(
     v_2,
     x,
     y,
+    double_precision=False,
 ):
+
+    if double_precision:
+        data_type = np.float64
+    else:
+        data_type = np.float32
 
     sim_dir_name = f"./simulations/{simulation_name}/"
     os.makedirs(sim_dir_name, exist_ok=True)

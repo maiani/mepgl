@@ -11,42 +11,14 @@ import subprocess
 
 import numpy as np
 
-from config import (
-    F,
-    N,
-    a_1,
-    a_2,
-    ax,
-    ay,
-    b_1,
-    b_2,
-    comp_domain,
-    default_relaxation_step_number,
-    delta,
-    dx,
-    eta,
-    gamma,
-    h,
-    iterations,
-    m_xx_1,
-    m_xx_2,
-    m_yy_1,
-    m_yy_2,
-    modes,
-    multicomponent,
-    thin_film,
-    q_1,
-    q_2,
-    sc_domain,
-    simulation_name,
-    u_1,
-    u_2,
-    v_1,
-    v_2,
-    x,
-    y,
-)
-from mepgl_lib.launcher_utils import generate_init, launch_simulation, write_header, generate_launcher
+from config import (F, N, a_1, a_2, ax, ay, b_1, b_2, comp_domain,
+                    default_relaxation_step_number, delta, dev_number,
+                    double_precision, dx, eta, gamma, h, iterations, m_xx_1,
+                    m_xx_2, m_yy_1, m_yy_2, modes, multicomponent, q_1, q_2,
+                    sc_domain, simulation_name, thin_film, u_1, u_2, v_1, v_2,
+                    x, y)
+from mepgl_lib.launcher_utils import (generate_headers, generate_init,
+                                      launch_simulation)
 
 data_type = np.float32
 
@@ -110,24 +82,27 @@ if not (args.no_init or args.rel_cont):
     print("")
 
     # Generate the header file
-    print("[*] Generating header.")
-    write_header(
+    new_headers = generate_headers(
         N=N,
         dx=dx,
         default_relaxation_step_number=default_relaxation_step_number,
         multicomponent=multicomponent,
         thin_film=thin_film,
+        double_precision=double_precision,
+        dev_number=dev_number,
     )
 
-    # Compile binaries
-    print("[*] Compiling binaries.")
-    if args.debug:
-        subprocess.run(["bash", "./compile.sh", "--debug"])
+    if new_headers or not os.path.exists("./mepgl"):
+        # Compile binaries
+        print("[*] New header generated or missing executable, compiling binaries.")
+        if args.debug:
+            subprocess.run(["bash", "./compile.sh", "--debug"])
+        else:
+            subprocess.run(["bash", "./compile.sh"])
+        print("==> Compilation finished.")
+        print("")
     else:
-        subprocess.run(["bash", "./compile.sh"])
-
-    print("==> Compilation finished.")
-    print("")
+        print("[*] No new header needed, skipping compilation.")
 
 if args.rel_cont:    
     print("Reloading simulation data...   ", end="")

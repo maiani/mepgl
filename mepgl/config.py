@@ -14,6 +14,12 @@ from mepgl_lib.builder import StringBuilder
 
 #############################################################################################
 
+# GPU number
+dev_number = 0
+
+# Double precision
+double_precision = False
+
 # Name of the simulation
 simulation_name = "skyrmion_H_d0.3_h060"
 
@@ -30,7 +36,7 @@ iterations = np.array([4000])
 # C -> SSM with cubic spline
 modes = np.array(["L"])
 
-default_relaxation_step_number = 30
+default_relaxation_step_number = 25
 
 multicomponent = True
 thin_film = False

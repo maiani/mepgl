@@ -6,7 +6,6 @@ authors:
     orcid: " https://orcid.org/0000-0001-8293-3194"
 title: "mepgl"
 version: 0.2.0
-#doi:
 date-released: 2021-12-01
 url: "https://github.com/maiani/mepgl"
 
@@ -15,21 +14,17 @@ preferred-citation:
   authors:
     - family-names: "Benfenati"
       given-names: "Andrea"
-      #orcid: "https://orcid.org/0000-0000-0000-0000"
     - family-names: "Maiani"
       given-names: "Andrea"
       orcid: " https://orcid.org/0000-0001-8293-3194"
     - family-names: "Rybakov"
       given-names: " Filipp N."
-      #orcid: "https://orcid.org/0000-0000-0000-0000"
     - family-names: "Babaev"
       given-names: "Egor"
   doi: "10.1103/PhysRevB.101.220505"
   url: "https://journals.aps.org/prb/abstract/10.1103/PhysRevB.101.220505"
   journal: "Physical Review B"
   month: 6
-  start: 220505 # First page number
-  # end: 10 # Last page number
   title: "Vortex nucleation barrier in superconductors beyond the Bean-Livingston approximation: A numerical approach for the sphaleron problem in a gauge theory"
   issue: 22
   volume: 101

@@ -31,6 +31,6 @@ constexpr int blockSizeX = 1024;
 constexpr int gridSizeX = (int)((N*N)/blockSizeX + 1);                                  
 constexpr real dx = 0.03000000000000025;                                                               
                                                                                         
-constexpr int default_relaxation_step_number = 10;        
+constexpr int default_relaxation_step_number = 25;        
                                                                                         
 #endif // CONFIG_CUH                                                                    

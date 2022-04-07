@@ -6,4 +6,4 @@
 
 ## Software
 - Switch to HDF5 for data
-- Rewrite builder code
+- Remove the need of recompilation when changing dx
