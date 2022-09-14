@@ -70,14 +70,13 @@ This code has been used for the following papers:
 * \[1\] Benfenati A., Maiani A., Rybakov F. N., Bababev E. - *Vortex nucleation barrier revisited* - https://arxiv.org/abs/1911.09513
 * \[2\] Maiani A., Benfenati A., Bababev E. - *Vortex nucleation barriers and stable fractional vortices near boundaries in multicomponent superconductors* - https://arxiv.org/abs/2111.01061
 
-If you use this code, please cite it as 
-
+If you use this code, please cite the repository and the methods described in 
 ```
-@article{mepgl,
+@article{Benfenati_PRB_2020,
 author = {Benfenati, Andrea and Maiani, Andrea and Rybakov, Filipp N. and Babaev, Egor},
 doi = {10.1103/PhysRevB.101.220505},
 issn = {24699969},
-journal = {Phys. Rev. B},
+journal = {Physical Review B},
 month = {jun},
 number = {22},
 pages = {220505},
@@ -85,6 +84,20 @@ title = {{Vortex nucleation barrier in superconductors beyond the Bean-Livingsto
 url = {http://arxiv.org/abs/1911.09513 https://link.aps.org/doi/10.1103/PhysRevB.101.220505},
 volume = {101},
 year = {2020}
+}
+```
+and, for the multicomponent version, in 
+```
+@article{Maiani_PRB_2022, 
+year = {2022}, 
+title = {{Vortex nucleation barriers and stable fractional vortices near boundaries in multicomponent superconductors}}, 
+author = {Maiani, Andrea and Benfenati, Andrea and Babaev, Egor}, 
+journal = {Physical Review B}, 
+issn = {2469-9950}, 
+doi = {10.1103/PhysRevB.105.224507}, 
+pages = {224507}, 
+number = {22}, 
+volume = {105}, 
 }
 ```
 
